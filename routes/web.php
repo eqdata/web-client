@@ -16,5 +16,5 @@ Route::get('/', function () {
 });
 
 Route::get('/{path?}', function($path = null){
-    return View::make('pages.base');
+    return View::make('pages.base')->with('showNavSearch', 1);
 })->where('path', '.*');

@@ -15,18 +15,21 @@
                 <li><a href="/feed">Live Feed</a></li>
                 <li><a href="#logout" data-prevent="">Login</a></li>
             </ul>
-            <div class="col-sm-6 col-md-6">
-                <form class="navbar-form">
-                    <div class="form-group" style="display:inline;">
-                        <div class="input-group" style="display:table;">
+            @if(isset($showNavSearch))
+                <div class="col-sm-6 col-md-6">
+                    <form class="navbar-form" id="search-form" onsubmit="doSearch()">
+                        <div class="form-group" style="display:inline;">
+                            <div class="input-group" style="display:table;">
                             <span class="input-group-addon" style="width:1%;"><span
                                         class="glyphicon glyphicon-search"></span></span>
-                            <input class="form-control" name="search" placeholder="Search" autocomplete="off"
-                                   autofocus="autofocus" type="text">
+                                <input class="form-control" name="search" placeholder="Search" autocomplete="off"
+                                       autofocus="autofocus" id="search-query" type="text">
+
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
+            @endif
 
         </div><!--/.nav-collapse -->
     </div>

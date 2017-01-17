@@ -9,11 +9,11 @@
                 </h1>
             </div>
             <div class="row">
-                <div id="custom-search-input">
+                <form id="search-form">
                     <div class="input-group col-md-12">
-                        <input type="text" class="search-query form-control" placeholder="Search"/>
+                        <input id="search-query" type="text" class="search-query form-control" placeholder="Search"/>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
 
