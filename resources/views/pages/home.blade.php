@@ -11,7 +11,7 @@
             <div class="row">
                 <form id="search-form">
                     <div class="input-group col-md-12">
-                        <input id="search-query" type="text" class="search-query form-control" placeholder="Search"/>
+                        <input id="search-query" autocomplete="off" type="text" class="search-query form-control" placeholder="Search"/>
                     </div>
                 </form>
             </div>

@@ -25,9 +25,9 @@ class SearchResults extends Component {
 
     render() {
         var rows = [];
-        this.state.results.forEach((result) => {
+        this.state.results.forEach(function(result){
             rows.push(<ResultItem key={result.name} item={result}/>)
-        })
+        });
         return (
             <div>
                 <h1 id="page-title" className="page-header">
