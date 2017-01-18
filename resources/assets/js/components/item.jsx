@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
 
+import helpers from '../helpers.js';
+
 function getStat(stats, code) {
     var filtered = stats.filter(
         function (stat) {
@@ -122,113 +124,116 @@ class Item extends React.Component {
         super(props);
         this.state = {
             item: [],
+            test: "hey"
         };
-        this.state = {
-            item: {
-                "Name": "Fiery Avenger",
-                "Image": "/images/Item_519.png",
-                "AveragePrice": 0,
-                "Statistics": [
-                    {
-                        "Code": "skill",
-                        "Value": "2H SLASHING"
-                    },
-                    {
-                        "Code": "atk delay",
-                        "Value": 44
-                    },
-                    {
-                        "Code": "dmg",
-                        "Value": 33
-                    },
-                    {
-                        "Code": "str",
-                        "Value": 15
-                    },
-                    {
-                        "Code": "cha",
-                        "Value": 10
-                    },
-                    {
-                        "Code": "wis",
-                        "Value": 15
-                    },
-                    {
-                        "Code": "hp",
-                        "Value": 25
-                    },
-                    {
-                        "Code": "mana",
-                        "Value": 25
-                    },
-                    {
-                        "Code": "sv fire",
-                        "Value": 5
-                    },
-                    {
-                        "Code": "sv disease",
-                        "Value": 5
-                    },
-                    {
-                        "Code": "sv cold",
-                        "Value": 5
-                    },
-                    {
-                        "Code": "sv magic",
-                        "Value": 5
-                    },
-                    {
-                        "Code": "sv poison",
-                        "Value": 5
-                    },
-                    {
-                        "Code": "wt",
-                        "Value": 0.1
-                    },
-                    {
-                        "Code": "size",
-                        "Value": "LARGE"
-                    }
-                ],
-                "Effect": {
-                    "URI": "http://wiki.project1999.com/Flame_Shock",
-                    "Name": "Flame Shock",
-                    "Restriction": "(Combat, Casting Time: Instant) at Level 45"
-                },
-                "Affinities": [
-                    "MAGIC ITEM",
-                    "LORE ITEM",
-                    "NO DROP"
-                ],
-                "Races": [
-                    "ALL"
-                ],
-                "Classes": [
-                    "PAL"
-                ],
-                "Slots": [
-                    "PRIMARY"
-                ]
-            }
-        };
+        // this.state = {
+        //     item: {
+        //         "Name": "Fiery Avenger",
+        //         "Image": "/images/Item_519.png",
+        //         "AveragePrice": 0,
+        //         "Statistics": [
+        //             {
+        //                 "Code": "skill",
+        //                 "Value": "2H SLASHING"
+        //             },
+        //             {
+        //                 "Code": "atk delay",
+        //                 "Value": 44
+        //             },
+        //             {
+        //                 "Code": "dmg",
+        //                 "Value": 33
+        //             },
+        //             {
+        //                 "Code": "str",
+        //                 "Value": 15
+        //             },
+        //             {
+        //                 "Code": "cha",
+        //                 "Value": 10
+        //             },
+        //             {
+        //                 "Code": "wis",
+        //                 "Value": 15
+        //             },
+        //             {
+        //                 "Code": "hp",
+        //                 "Value": 25
+        //             },
+        //             {
+        //                 "Code": "mana",
+        //                 "Value": 25
+        //             },
+        //             {
+        //                 "Code": "sv fire",
+        //                 "Value": 5
+        //             },
+        //             {
+        //                 "Code": "sv disease",
+        //                 "Value": 5
+        //             },
+        //             {
+        //                 "Code": "sv cold",
+        //                 "Value": 5
+        //             },
+        //             {
+        //                 "Code": "sv magic",
+        //                 "Value": 5
+        //             },
+        //             {
+        //                 "Code": "sv poison",
+        //                 "Value": 5
+        //             },
+        //             {
+        //                 "Code": "wt",
+        //                 "Value": 0.1
+        //             },
+        //             {
+        //                 "Code": "size",
+        //                 "Value": "LARGE"
+        //             }
+        //         ],
+        //         "Effect": {
+        //             "URI": "http://wiki.project1999.com/Flame_Shock",
+        //             "Name": "Flame Shock",
+        //             "Restriction": "(Combat, Casting Time: Instant) at Level 45"
+        //         },
+        //         "Affinities": [
+        //             "MAGIC ITEM",
+        //             "LORE ITEM",
+        //             "NO DROP"
+        //         ],
+        //         "Races": [
+        //             "ALL"
+        //         ],
+        //         "Classes": [
+        //             "PAL"
+        //         ],
+        //         "Slots": [
+        //             "PRIMARY"
+        //         ]
+        //     }
+        // };
     }
 
     componentDidMount() {
         // get state here from API with this.props.params
-        // $.ajax({
-        //     url: "http://52.205.204.206:8085/items/" + this.props.params.item,
-        //     dataType: 'json',
-        //     headers: {
-        //         'Access-Control-Allow-Origin': '*'
-        //     },
-        //     success: function (item) {
-        //         this.setState({item: item});
-        //     }.bind(this),
-        // });
+        helpers.ajax({
+            url: "http://52.205.204.206:8085/items/" + this.props.params.item,
+            contentType: "application/json",
+            cache: false,
+            type: "GET",
+        }).then(function(data) {
+            console.log("data: " + data);
+            this.setState({item: data, test: "world"});
+        }, function(err) {
+            console.log("error: " + err);
+        });
     }
 
     render() {
-        console.log(this.state.item);
+        console.log("render() item: " + this.state.item);
+        console.log(this.state);
         if (this.state.item.length == 0)
             return (<div>
                 <h1 id="page-title" className="page-header">
