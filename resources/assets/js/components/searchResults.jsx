@@ -1,11 +1,49 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
+import {Link} from 'react-router';
+
+import helpers from '../helpers.js';
 
 class ResultItem extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            itemInfo: [],
+            aucInfo:  "none"
+        };
+    }
+    componentWillMount() {
+        // get state here from API with this.props.params
+        helpers.ajax({
+            url: "http://52.205.204.206:8085/items/" + this.props.item,
+            contentType: "application/json",
+            cache: false,
+            type: "GET",
+        }).then(function (payload) {
+            this.setState({itemInfo: payload.data});
+        }.bind(this), function (err) {
+            console.log("error: " + err);
+        });
+
+        helpers.ajax({
+            url: "http://52.205.204.206:8085/items/auctions/" + this.props.item +"?take=1",
+            contentType: "application/json",
+            cache: false,
+            type: "GET",
+        }).then(function (payload) {
+            this.setState({aucInfo: payload.data.Auctions});
+        }.bind(this), function (err) {
+            console.log("error: " + err);
+        });
+    }
+
     render() {
         return (
-            <div id="content-wrapper">
-               <h2>{this.props.item.name}</h2>
+            <div id="content-wrapper" className="well well-sm">
+                <h4><Link to={"/item/" + encodeURI(this.props.item)}>{this.props.item}</Link></h4>
+                <p>Average Price: {this.state.itemInfo.AveragePrice}<br />
+                Last Seen: {this.state.aucInfo[0].Updated_at}</p>
             </div>
         );
     }
@@ -16,18 +54,34 @@ class SearchResults extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: [
-                {name: 'hello'},
-                {name: 'world'},
-                {name: 'hi'}]
+            results: []
         };
+    }
+
+    componentWillMount() {
+        // get state here from API with this.props.params
+        helpers.ajax({
+            url: "http://52.205.204.206:8085/items/search/" + this.props.params.terms,
+            contentType: "application/json",
+            cache: false,
+            type: "GET",
+        }).then(function (payload) {
+            this.setState({results: payload.data});
+        }.bind(this), function (err) {
+            console.log("error: " + err);
+        });
     }
 
     render() {
         var rows = [];
-        this.state.results.forEach(function(result){
-            rows.push(<ResultItem key={result.name} item={result}/>)
-        });
+        if (this.state.results.Items)
+            this.state.results.Items.forEach(function (result) {
+                rows.push(<ResultItem key={result} item={result}/>)
+            });
+        else
+            return (
+                <h2>No items were found using the phrase "{this.props.params.terms}"</h2>
+            );
         return (
             <div>
                 <h1 id="page-title" className="page-header">

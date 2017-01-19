@@ -10,7 +10,7 @@
             </div>
             <div class="row">
                 <form id="search-form">
-                    <div class="input-group col-md-12">
+                    <div class="input-group col-xs-offset-2 col-xs-8 col-sm-offset-0 col-sm-12 col-md-12">
                         <input id="search-query" autocomplete="off" type="text" class="search-query form-control" placeholder="Search"/>
                     </div>
                 </form>

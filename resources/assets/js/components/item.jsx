@@ -3,6 +3,12 @@ import {render} from 'react-dom';
 
 import helpers from '../helpers.js';
 
+/**
+ * Returns a stat value based on a key
+ * @param stats stats object
+ * @param code key
+ * @returns {*} value corresponding to key
+ */
 function getStat(stats, code) {
     var filtered = stats.filter(
         function (stat) {
@@ -14,20 +20,34 @@ function getStat(stats, code) {
     return "";
 }
 
+/**
+ * Generates a string label for a specific stat with "+" sign if indicated.
+ * @param label Label without ":"
+ * @param stat Stat value
+ * @param sign add "+" sign
+ * @returns {string}
+ */
 function withLabel(label, stat, sign = false) {
     if (sign && String(stat).charAt(0) != "-")
         stat = "+" + stat + " ";
     return (["+ ", ""].indexOf(stat) == -1 ? label + ": " + stat : "");
 }
 
+/**
+ * onverts effect object to elements
+ * @param effect
+ * @returns {*}
+ */
 function createEffect(effect) {
     if (effect.name)
         return <span>Effect: <a href={effect.uri}>{effect.name}</a> {effect.restrict}</span>;
     return null;
 }
 
+/**
+ * Item information box.
+ */
 class ItemInfo extends Component {
-
 
     render() {
         // parse info
@@ -94,7 +114,7 @@ class ItemInfo extends Component {
                         <p>
                             {lines.affinity ? <span>{lines.affinity} <br /></span> : ""}
                             {lines.slot ? <span>{lines.slot} <br /></span> : ""}
-                            {lines.skill ? <span>{lines.skill} <br /></span> : ""}
+                            {lines.skill != " " ? <span>{lines.skill} <br /></span> : ""}
                             {lines.dmg ? <span>{lines.dmg} <br /></span> : ""}
                             {lines.stats ? <span>{lines.stats} <br /></span> : ""}
                             {lines.saves ? <span>{lines.saves} <br /></span> : ""}
@@ -111,24 +131,55 @@ class ItemInfo extends Component {
     }
 }
 
+/**
+ * Auction data information
+ */
 class PriceInfo extends Component {
     render() {
+        if (!this.props.auctions)
+            return (<div>
+                <h2 id="page-title" className="page-header">
+                    No auctions not found
+                </h2>
+            </div>);
+
         return (
-            <div id="price-info">
-                <h2>{this.props.item.AveragePrice}</h2>
+            <div className="row">
+                <h3>Auction History</h3>
+                <table id="price-info" className="table table-striped">
+                    <tbody>
+                    <tr>
+                        <th>Seller</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
+                    </tr>
+                    {this.props.auctions.map(function (auction) {
+                        return <tr key={auction.Seller}>
+                            <td>{auction.Seller}</td>
+                            <td>{auction.Price}</td>
+                            <td>{auction.Quantity}</td>
+                            <td>{auction.Created_at}</td>
+                        </tr>
+                    })}
+                    </tbody>
+                </table>
             </div>
         )
     }
 }
 
+/**
+ * Item page including item box and auction data info for the item
+ */
 class Item extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             item: [],
+            auctions: []
         };
-
     }
 
     componentWillMount() {
@@ -139,8 +190,19 @@ class Item extends React.Component {
             cache: false,
             type: "GET",
         }).then(function (payload) {
-            console.log(payload);
             this.setState({item: payload.data});
+        }.bind(this), function (err) {
+            console.log("error: " + err);
+        });
+
+        // TODO paginate
+        helpers.ajax({
+            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item,
+            contentType: "application/json",
+            cache: false,
+            type: "GET",
+        }).then(function (payload) {
+            this.setState({auctions: payload.data.Auctions});
         }.bind(this), function (err) {
             console.log("error: " + err);
         });
@@ -159,11 +221,10 @@ class Item extends React.Component {
                     {this.state.item.Name}
                 </h1>
                 <ItemInfo item={this.state.item}/>
-                <PriceInfo item={this.state.item}/>
+                <PriceInfo auctions={this.state.auctions}/>
             </div>
         );
     }
-
 }
 
 export default Item
