@@ -6,13 +6,14 @@ import helpers from '../helpers.js';
 
 class ResultItem extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             itemInfo: [],
-            aucInfo:  "none"
+            aucInfo: "none"
         };
     }
+
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
@@ -27,7 +28,7 @@ class ResultItem extends Component {
         });
 
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + this.props.item +"?take=1",
+            url: "http://52.205.204.206:8085/items/auctions/" + this.props.item + "?take=1",
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -39,11 +40,15 @@ class ResultItem extends Component {
     }
 
     render() {
+        var d = "never";
+        if (this.state.aucInfo) {
+            d = (helpers.timesince(new Date(this.state.aucInfo[0].Updated_at)) + " ago");
+        }
         return (
             <div id="content-wrapper" className="well well-sm">
                 <h4><Link to={"/item/" + encodeURI(this.props.item)}>{this.props.item}</Link></h4>
                 <p>Average Price: {this.state.itemInfo.AveragePrice}<br />
-                Last Seen: {this.state.aucInfo[0].Updated_at}</p>
+                    Last Seen: {d}</p>
             </div>
         );
     }
