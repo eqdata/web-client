@@ -1,6 +1,6 @@
 require('./bootstrap');
-require('./search');
-require('./helpers');
+require('./utils/search');
+require('./utils/helpers');
 
 import React, {Component} from 'react';
 import {render} from 'react-dom';
@@ -18,7 +18,7 @@ if (document.getElementById('content-container'))
         <Router history={browserHistory}>
             <Route path="/feed" component={AuctionFeed}/>
             <Route path="/search/:terms" component={SearchResults}/>
-            <Route path="/item/:item" component={Item}/>
+            <Route path="/item/:item(/:auctions)(/:id)" component={Item}/>
 
             <Route path="*" component={NotFound} />
         </Router>,

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
+import client from 'socket.io-client';
+require("../utils/ajaxtooltip");
 
 class AuctionFeed extends React.Component {
     constructor(props) {
@@ -8,21 +10,19 @@ class AuctionFeed extends React.Component {
     }
 
     componentDidMount() {
-        // this is an "echo" websocket service for testing pusposes
-        this.connection = new WebSocket('ws://echo.websocket.org');
-        // listen to onmessage event
-        this.connection.onmessage = evt => {
-            // add the new message to state
-            this.setState({
-                messages: this.state.messages.concat([evt.data])
-            })
-        };
+        var socket = client.connect('http://52.205.204.206:3000');
 
-        // for testing: sending a message to the echo service every 2 seconds,
-        // the service sends it right back
-        setInterval(_ => {
-            this.connection.send(Math.random())
-        }, 2000)
+        socket.on('server:event', data => {
+            this.setState({
+                messages: this.state.messages.concat(data)
+            });
+        })
+    }
+
+    componentDidUpdate(){
+        // keep feed growing upward
+        var objDiv = document.getElementById("auction-box");
+        objDiv.scrollTop = objDiv.scrollHeight;
     }
 
     render() {
@@ -32,7 +32,10 @@ class AuctionFeed extends React.Component {
                 <h1 id="page-title" className="page-header">
                     Live Auction Feed
                 </h1>
-                <ul>{ this.state.messages.map((msg, idx) => <li key={'msg-' + idx }>{ msg }</li>)}</ul>
+                <div className="auction-box" id="auction-box">
+                    { this.state.messages.map((msg, idx) => <div key={'msg-' + idx } className="auction-message">{ msg }</div>)}
+
+                </div>
 
             </div>
         );

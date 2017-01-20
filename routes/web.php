@@ -14,7 +14,7 @@
 Route::get('/', function () {
     return View::make('pages.home');
 });
-
+Route::get('tooltip/{name}', 'TooltipController@getAuctionStats');
 Route::get('/{path?}', function($path = null){
     return View::make('pages.base')->with('showNavSearch', 1);
 })->where('path', '.*');

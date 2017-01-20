@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 import {Link} from 'react-router';
 
-import helpers from '../helpers.js';
+import helpers from '../utils/helpers.js';
 
 class ResultItem extends Component {
 
@@ -85,7 +85,10 @@ class SearchResults extends Component {
             });
         else
             return (
+                <div>
+                    <a href="#" title="ajax:/tooltip/test">Some link</a>
                 <h2>No items were found using the phrase "{this.props.params.terms}"</h2>
+                    </div>
             );
         return (
             <div>

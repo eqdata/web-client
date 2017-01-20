@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {render} from 'react-dom';
+import {Chart} from 'react-google-charts';
+import {Link} from 'react-router';
 
-import helpers from '../helpers.js';
-
+import helpers from '../utils/helpers.js';
+import priceHelpers from '../utils/priceData';
 /**
  * Returns a stat value based on a key
  * @param stats stats object
@@ -17,7 +19,8 @@ function getStat(stats, code) {
     );
     if (filtered.length)
         return filtered[0].Value;
-    return "";
+    else
+        return "";
 }
 
 /**
@@ -30,7 +33,8 @@ function getStat(stats, code) {
 function withLabel(label, stat, sign = false) {
     if (sign && String(stat).charAt(0) != "-")
         stat = "+" + stat + " ";
-    return (["+ ", ""].indexOf(stat) == -1 ? label + ": " + stat : "");
+    else
+        return (["+ ", ""].indexOf(stat) == -1 ? label + ": " + stat : "");
 }
 
 /**
@@ -41,7 +45,158 @@ function withLabel(label, stat, sign = false) {
 function createEffect(effect) {
     if (effect.name)
         return <span>Effect: <a href={effect.uri}>{effect.name}</a> {effect.restrict}</span>;
-    return null;
+    else
+        return null;
+}
+
+class RawAuctions extends Component {
+    render() {
+        return (
+            <h2>Put raw auctions here and highlight the one in question if specified</h2>
+        )
+    };
+}
+
+class ItemGraph extends Component {
+
+    componentWillMount() {
+        var index = 0;
+        var chartData = [];
+        var stdDev = 0;
+        var mean = 0;
+        var min = 0;
+        var max = 0;
+
+        var prices = [];
+        var prec = 10;
+        var now = new Date();
+        // standard deviation
+        var createPrices = function () {
+            return new Promise(function (resolve, reject) {
+                if (this.props.auctions)
+                    this.props.auctions.forEach(function (auc) {
+                        var priceDate = new Date(auc.Updated_at);
+                        // only include auctions in last 30 days
+                        // if (Math.ceil((now - priceDate) * 1000 * 60 * 60 * 24) < 30)
+                        prices.push(auc.Price);
+                    });
+                if (prices.length > 0)
+                    resolve(prices);
+                else
+                    reject("No prices");
+            }.bind(this));
+        }.bind(this);
+
+        var generateStats = function (prices) {
+            return new Promise(function (resolve, reject) {
+                stdDev = priceHelpers.getStandardDeviation(prices, prec);
+                mean = Math.floor(priceHelpers.arrayMean(prices));
+                var pricesFiltered = prices.filter(function (price) {
+                    // TODO remove outliers from calculation of mean using a filter function on the array
+
+                });
+                min = mean - 2 * stdDev;
+                max = mean + 2 * stdDev;
+                console.log("std: " + stdDev);
+                console.log("min: " + min);
+                console.log("mean: " + mean);
+                if (stdDev && mean && min && max)
+                    resolve({
+                        stdDev: stdDev,
+                        mean: mean,
+                        min: min,
+                        max: max
+                    });
+                else
+                    reject("Invalid stats");
+            }.bind(this));
+        }.bind(this);
+
+        var normalize = function (stats) {
+            return new Promise(function (resolve, reject) {
+                // normalize price range
+                for (var i = stats.min; i < stats.max; i += 1) {
+                    chartData[index] = new Array(4);
+                    chartData[index][0] = i;
+                    chartData[index][1] = priceHelpers.NormalDensityZx(i, stats.mean, stats.stdDev);
+                    chartData[index][2] = null;
+                    chartData[index][3] = null;
+                    index++;
+                }
+                // TODO 2nd param
+                chartData[index] = [stats.mean, null, 0, null];
+                chartData[index + 1] = [stats.mean, null, 0.0004, "Average: " + stats.mean.toString()];
+                if (chartData.length > 0)
+                    resolve(chartData)
+                else
+                    reject("invalid chartData");
+            }.bind(this));
+        }.bind(this);
+
+        var writeState = function (chartData) {
+            return new Promise(function (resolve, reject) {
+                this.setState({
+                    options: {
+                        title: 'Price Distribution',
+                        hAxis: {minorGridlines: {count: 6}},
+                        legend: 'none'
+                    },
+                    rows: chartData,
+                    columns: [
+                        {
+                            type: "number",
+                            label: "x-value"
+                        },
+                        {
+                            type: "number",
+                            label: "y-value"
+                        },
+                        {
+                            type: "number",
+                            label: "annotation-y"
+                        },
+                        {
+                            type: "string",
+                            role: "annotation"
+                        }
+                    ],
+                    annotations: {
+                        style: "line"
+                    }
+                });
+            }.bind(this));
+        }.bind(this);
+
+        createPrices()
+            .then(generateStats).catch(function (err) {
+            console.log("error: " + err);
+        })
+            .then(normalize).catch(function (err) {
+            console.log("error: " + err);
+        })
+            .then(writeState).catch(function (err) {
+            console.log("error: " + err);
+        });
+    }
+
+    render() {
+        if (this.props.auctions)
+            return (
+                <Chart
+                    chartType="AreaChart"
+                    data={this.state.data}
+                    options={this.state.options}
+                    rows={this.state.rows}
+                    columns={this.state.columns}
+                    graph_id="AreaChart"
+                    width="100%"
+                    height="400px"
+                    legend_toggle
+                />
+            );
+        else
+            return (<div></div>);
+    }
 }
 
 /**
@@ -136,30 +291,33 @@ class ItemInfo extends Component {
  */
 class PriceInfo extends Component {
     render() {
-        if (!this.props.auctions)
-            return (<div>
-                <h2 id="page-title" className="page-header">
-                    No auctions not found
-                </h2>
-            </div>);
-
+        var now = new Date();
         return (
             <div className="row">
                 <h3>Auction History</h3>
                 <table id="price-info" className="table table-striped">
                     <tbody>
                     <tr>
-                        <th>Seller</th>
+                        <th>Player</th>
                         <th>Price</th>
                         <th>Quantity</th>
-                        <th>Date</th>
+                        <th>Time</th>
                     </tr>
-                    {this.props.auctions.map(function (auction) {
-                        return <tr key={auction.Seller}>
+                    {this.props.auctions.reverse().map(function (auction) {
+                        // format date
+                        var d = new Date(auction.Updated_at);
+                        if (Math.ceil(((now - d) / 1000) / 60) < 59)
+                            d = helpers.timesince(d) + " ago";
+                        else
+                            d = d.toString();
+
+                        return <tr key={auction.Created_at}>
                             <td>{auction.Seller}</td>
                             <td>{auction.Price}</td>
                             <td>{auction.Quantity}</td>
-                            <td>{auction.Created_at}</td>
+                            <td><Link
+                                to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
+                            </td>
                         </tr>
                     })}
                     </tbody>
@@ -170,15 +328,51 @@ class PriceInfo extends Component {
 }
 
 /**
+ * Item statistics that appear below item box
+ */
+class ItemAuctionStats extends Component {
+    render() {
+        // no auctions
+        if (!this.props.auctions)
+            return (<div>
+                <h2 id="page-title" className="page-header">
+                    No auctions found
+                </h2>
+            </div>);
+
+        // render raw auctions
+        else if (this.props.raw) {
+            return (
+                <div className="row">
+                    <RawAuctions rawAuctions={this.props.rawAuctionId} item={this.props.item}/>
+                </div>
+            );
+        } else
+        // render price history and graph
+            return (
+                <div className="row">
+                    <div className="col-md-5">
+                        <PriceInfo auctions={this.props.auctions} item={this.props.item}/>
+                    </div>
+                    <div className="col-md-7">
+                        <ItemGraph auctions={this.props.auctions} item={this.props.item}/>
+                    </div>
+                </div>
+            )
+    }
+}
+
+/**
  * Item page including item box and auction data info for the item
  */
-class Item extends React.Component {
+class Item extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             item: [],
-            auctions: []
+            auctions: [],
+            raw: false
         };
     }
 
@@ -215,15 +409,19 @@ class Item extends React.Component {
                     Item not found
                 </h1>
             </div>);
-        return (
-            <div>
-                <h1 id="page-title" className="page-header">
-                    {this.state.item.Name}
-                </h1>
-                <ItemInfo item={this.state.item}/>
-                <PriceInfo auctions={this.state.auctions}/>
-            </div>
-        );
+        else
+            return (
+                <div>
+                    <div className="row">
+                        <h1 id="page-title" className="page-header">
+                            {this.state.item.Name}
+                        </h1>
+                        <ItemInfo item={this.state.item}/>
+                    </div>
+                    <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions}
+                                      item={this.state.item}/>
+                </div>
+            );
     }
 }
 
