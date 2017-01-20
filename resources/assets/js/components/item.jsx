@@ -66,6 +66,7 @@ class ItemGraph extends Component {
         var mean = 0;
         var min = 0;
         var max = 0;
+        var maxY = 0;
 
         var prices = [];
         var prec = 10;
@@ -77,9 +78,10 @@ class ItemGraph extends Component {
                     this.props.auctions.forEach(function (auc) {
                         var priceDate = new Date(auc.Updated_at);
                         // only include auctions in last 30 days
-                        // if (Math.ceil((now - priceDate) * 1000 * 60 * 60 * 24) < 30)
-                        prices.push(auc.Price);
+                        if (auc.Price > 0 && Math.ceil((now - priceDate) / 1000 / 60 / 60 / 24) < 2)
+                            prices.push(auc.Price);
                     });
+
                 }
                 if (prices.length > 0) {
                     resolve(prices);
@@ -97,11 +99,13 @@ class ItemGraph extends Component {
                 //     // TODO remove outliers from calculation of mean using a filter function on the array
                 //
                 // });
+                if(stdDev == 0)
+                    stdDev = mean/4;
                 min = mean - 2 * stdDev;
                 max = mean + 2 * stdDev;
-                console.log("std: " + stdDev);
-                console.log("min: " + min);
-                console.log("mean: " + mean);
+                console.log(min);
+                console.log(max);
+                console.log(stdDev);
                 if (stdDev && mean && min && max)
                     resolve({
                         stdDev: stdDev,
@@ -117,17 +121,19 @@ class ItemGraph extends Component {
         var normalize = function (stats) {
             return new Promise(function (resolve, reject) {
                 // normalize price range
-                for (var i = stats.min; i < stats.max; i += 1) {
+                for (var i = stats.min; i < stats.max; i += Math.floor(stdDev / 50)) {
                     chartData[index] = new Array(4);
                     chartData[index][0] = i;
                     chartData[index][1] = priceHelpers.NormalDensityZx(i, stats.mean, stats.stdDev);
                     chartData[index][2] = null;
                     chartData[index][3] = null;
+                    if (chartData[index][1] > maxY)
+                        maxY = chartData[index][1];
                     index++;
                 }
                 // TODO 2nd param
                 chartData[index] = [stats.mean, null, 0, null];
-                chartData[index + 1] = [stats.mean, null, 0.0004, "Average: " + stats.mean.toString()];
+                chartData[index + 1] = [stats.mean, null, maxY, "Average (30 days): " + stats.mean.toString()];
                 if (chartData.length > 0)
                     resolve(chartData)
                 else
@@ -144,8 +150,8 @@ class ItemGraph extends Component {
             .then(normalize).catch(function (err) {
             console.log("normalize error: " + err);
         }.bind(this))
-            .then(function() {
-                console.log('setting state')
+            .then(function () {
+                console.log('setting state');
                 this.props.setGraphData({
                     options: {
                         title: 'Price Distribution',
@@ -179,7 +185,7 @@ class ItemGraph extends Component {
     }
 
     render() {
-        if (this.props.auctions && this.props.graphData) {
+        if (this.props.auctions && Array.isArray(this.props.graphData.rows) && this.props.graphData.rows.length > 0) {
             return (
                 <Chart
                     chartType="AreaChart"
@@ -194,7 +200,7 @@ class ItemGraph extends Component {
                 />
             );
         } else {
-            return (<div></div>);
+            return (<div>Invalid pricing data</div>);
         }
     }
 }
@@ -212,6 +218,7 @@ class ItemInfo extends Component {
         var skill = getStat(item.Statistics, "skill");
         var delay = getStat(item.Statistics, "atk delay");
         var dmg = getStat(item.Statistics, "dmg");
+        var ac = getStat(item.Statistics, "ac");
         var stats = {
             str: getStat(item.Statistics, "str"),
             sta: getStat(item.Statistics, "sta"),
@@ -245,6 +252,7 @@ class ItemInfo extends Component {
             affinity: affinities,
             slot: withLabel("Slot", slots),
             skill: withLabel("Skill", skill) + " " + withLabel("Atk Delay", delay),
+            ac: withLabel("AC", ac),
             dmg: withLabel("DMG", dmg),
             stats: withLabel("STR", stats.str, 1) + withLabel("STA", stats.sta, 1) + withLabel("DEX", stats.dex, 1) + withLabel("CHA", stats.cha, 1) + withLabel("AGI", stats.agi, 1) + withLabel("WIS", stats.wis, 1) + withLabel("INT", stats.int, 1) + withLabel("HP", stats.hp, 1) + withLabel("MANA", stats.mana, 1),
             saves: withLabel("SV MAGIC", saves.mr, 1) + withLabel("SV FIRE", saves.fr, 1) + withLabel("SV COLD", saves.cr, 1) + withLabel("SV POISON", saves.pr, 1) + withLabel("SV DISEASE", saves.dr, 1),
@@ -269,6 +277,7 @@ class ItemInfo extends Component {
                         <p>
                             {lines.affinity ? <span>{lines.affinity} <br /></span> : ""}
                             {lines.slot ? <span>{lines.slot} <br /></span> : ""}
+                            {lines.ac ? <span>{lines.ac} <br /></span> : ""}
                             {lines.skill != " " ? <span>{lines.skill} <br /></span> : ""}
                             {lines.dmg ? <span>{lines.dmg} <br /></span> : ""}
                             {lines.stats ? <span>{lines.stats} <br /></span> : ""}
@@ -304,7 +313,7 @@ class PriceInfo extends Component {
                         <th>Quantity</th>
                         <th>Time</th>
                     </tr>
-                    {this.props.auctions.reverse().map(function (auction) {
+                    {this.props.auctions.map(function (auction) {
                         // format date
                         var d = new Date(auction.Updated_at);
                         if (Math.ceil(((now - d) / 1000) / 60) < 59)
@@ -360,7 +369,8 @@ class ItemAuctionStats extends Component {
                         <PriceInfo auctions={this.props.auctions} item={this.props.item}/>
                     </div>
                     <div className="col-md-7">
-                        <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData} auctions={this.props.auctions} item={this.props.item}/>
+                        <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData}
+                                   auctions={this.props.auctions} item={this.props.item}/>
                     </div>
                 </div>
             )
@@ -397,6 +407,7 @@ class Item extends Component {
         });
 
         // TODO paginate
+        // ?skip=0&take=10&ascending=1
         helpers.ajax({
             url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item,
             contentType: "application/json",
@@ -408,9 +419,11 @@ class Item extends Component {
             console.log("error: " + err);
         });
     }
+
     setGraphData(graphState) {
-        this.setState({ graphData: graphState })
+        this.setState({graphData: graphState})
     }
+
     render() {
         if (this.state.item.length == 0)
             return (<div>
@@ -427,8 +440,9 @@ class Item extends Component {
                         </h1>
                         <ItemInfo item={this.state.item}/>
                     </div>
-                    <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions} graphData={this.state.graphData}
-                                      item={this.state.item} setGraphData={this.setGraphData.bind(this)} />
+                    <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions}
+                                      graphData={this.state.graphData}
+                                      item={this.state.item} setGraphData={this.setGraphData.bind(this)}/>
                 </div>
             );
     }
