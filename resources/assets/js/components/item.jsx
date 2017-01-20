@@ -81,10 +81,11 @@ class ItemGraph extends Component {
                         prices.push(auc.Price);
                     });
                 }
-                if (prices.length > 0)
+                if (prices.length > 0) {
                     resolve(prices);
-                else
+                } else {
                     reject("No prices");
+                }
             }.bind(this));
         }.bind(this);
 
@@ -134,9 +135,18 @@ class ItemGraph extends Component {
             }.bind(this));
         }.bind(this);
 
-        var writeState = function (chartData) {
-            return new Promise(function (resolve, reject) {
-                this.setState({
+        createPrices().catch(function (err) {
+            console.log("price error: " + err);
+        }.bind(this))
+            .then(generateStats).catch(function (err) {
+            console.log("stats error: " + err);
+        }.bind(this))
+            .then(normalize).catch(function (err) {
+            console.log("normalize error: " + err);
+        }.bind(this))
+            .then(function() {
+                console.log('setting state')
+                this.props.setGraphData({
                     options: {
                         title: 'Price Distribution',
                         hAxis: {minorGridlines: {count: 6}},
@@ -166,39 +176,26 @@ class ItemGraph extends Component {
                     }
                 });
             }.bind(this));
-        }.bind(this);
-
-        createPrices().catch(function (err) {
-            console.log("price error: " + err);
-        })
-            .then(generateStats).catch(function (err) {
-            console.log("stats error: " + err);
-        })
-            .then(normalize).catch(function (err) {
-            console.log("normalize error: " + err);
-        })
-            .then(writeState).catch(function (err) {
-            console.log("state write error: " + err);
-        });
     }
 
     render() {
-        if (this.props.auctions)
+        if (this.props.auctions && this.props.graphData) {
             return (
                 <Chart
                     chartType="AreaChart"
-                    data={this.state.data}
-                    options={this.state.options}
-                    rows={this.state.rows}
-                    columns={this.state.columns}
+                    data={this.props.graphData.data}
+                    options={this.props.graphData.options}
+                    rows={this.props.graphData.rows}
+                    columns={this.props.graphData.columns}
                     graph_id="AreaChart"
                     width="100%"
                     height="400px"
                     legend_toggle
                 />
             );
-        else
+        } else {
             return (<div></div>);
+        }
     }
 }
 
@@ -294,6 +291,7 @@ class ItemInfo extends Component {
  */
 class PriceInfo extends Component {
     render() {
+        //alert('yo')
         var now = new Date();
         return (
             <div className="row">
@@ -335,33 +333,38 @@ class PriceInfo extends Component {
  */
 class ItemAuctionStats extends Component {
     render() {
+        console.log("Props is: ", this.props)
         // no auctions
-        if (!this.props.auctions)
+        if (this.props.auctions.length == 0) {
+            console.log("NO AUCTIONS FOUND");
             return (<div>
                 <h2 id="page-title" className="page-header">
                     No auctions found
                 </h2>
             </div>);
-
+        }
         // render raw auctions
-        else if (this.props.raw) {
+        else if (typeof this.props.raw !== "undefined") {
+            console.log("RENDERING RAW AUCTIONS");
             return (
                 <div className="row">
                     <RawAuctions rawAuctions={this.props.rawAuctionId} item={this.props.item}/>
                 </div>
             );
-        } else
-        // render price history and graph
+        } else {
+            // render price history and graph
+            console.log("RENDERING PRICE HISTORY");
             return (
                 <div className="row">
                     <div className="col-md-5">
                         <PriceInfo auctions={this.props.auctions} item={this.props.item}/>
                     </div>
                     <div className="col-md-7">
-                        <ItemGraph auctions={this.props.auctions} item={this.props.item}/>
+                        <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData} auctions={this.props.auctions} item={this.props.item}/>
                     </div>
                 </div>
             )
+        }
     }
 }
 
@@ -375,7 +378,8 @@ class Item extends Component {
         this.state = {
             item: [],
             auctions: [],
-            raw: false
+            raw: false,
+            graphData: {}
         };
     }
 
@@ -404,7 +408,9 @@ class Item extends Component {
             console.log("error: " + err);
         });
     }
-
+    setGraphData(graphState) {
+        this.setState({ graphData: graphState })
+    }
     render() {
         if (this.state.item.length == 0)
             return (<div>
@@ -421,8 +427,8 @@ class Item extends Component {
                         </h1>
                         <ItemInfo item={this.state.item}/>
                     </div>
-                    <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions}
-                                      item={this.state.item}/>
+                    <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions} graphData={this.state.graphData}
+                                      item={this.state.item} setGraphData={this.setGraphData.bind(this)} />
                 </div>
             );
     }

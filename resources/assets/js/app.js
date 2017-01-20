@@ -13,14 +13,15 @@ import SearchResults from './components/searchResults.jsx'
 import Item from './components/item.jsx'
 import NotFound from './components/notFound.jsx'
 
-if (document.getElementById('content-container'))
+if (document.getElementById('content-container')) {
     render(
         <Router history={browserHistory}>
             <Route path="/feed" component={AuctionFeed}/>
             <Route path="/search/:terms" component={SearchResults}/>
             <Route path="/item/:item(/:auctions)(/:id)" component={Item}/>
 
-            <Route path="*" component={NotFound} />
+            <Route path="*" component={NotFound}/>
         </Router>,
         document.getElementById('content-container')
     );
+}
