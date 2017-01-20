@@ -73,13 +73,14 @@ class ItemGraph extends Component {
         // standard deviation
         var createPrices = function () {
             return new Promise(function (resolve, reject) {
-                if (this.props.auctions)
+                if (this.props.auctions.length > 0) {
                     this.props.auctions.forEach(function (auc) {
                         var priceDate = new Date(auc.Updated_at);
                         // only include auctions in last 30 days
                         // if (Math.ceil((now - priceDate) * 1000 * 60 * 60 * 24) < 30)
                         prices.push(auc.Price);
                     });
+                }
                 if (prices.length > 0)
                     resolve(prices);
                 else
@@ -91,10 +92,10 @@ class ItemGraph extends Component {
             return new Promise(function (resolve, reject) {
                 stdDev = priceHelpers.getStandardDeviation(prices, prec);
                 mean = Math.floor(priceHelpers.arrayMean(prices));
-                var pricesFiltered = prices.filter(function (price) {
-                    // TODO remove outliers from calculation of mean using a filter function on the array
-
-                });
+                // var pricesFiltered = prices.filter(function (price) {
+                //     // TODO remove outliers from calculation of mean using a filter function on the array
+                //
+                // });
                 min = mean - 2 * stdDev;
                 max = mean + 2 * stdDev;
                 console.log("std: " + stdDev);
@@ -167,15 +168,17 @@ class ItemGraph extends Component {
             }.bind(this));
         }.bind(this);
 
-        createPrices()
+        createPrices().catch(function (err) {
+            console.log("price error: " + err);
+        })
             .then(generateStats).catch(function (err) {
-            console.log("error: " + err);
+            console.log("stats error: " + err);
         })
             .then(normalize).catch(function (err) {
-            console.log("error: " + err);
+            console.log("normalize error: " + err);
         })
             .then(writeState).catch(function (err) {
-            console.log("error: " + err);
+            console.log("state write error: " + err);
         });
     }
 
