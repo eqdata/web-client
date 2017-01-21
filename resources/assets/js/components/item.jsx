@@ -12,6 +12,8 @@ import priceHelpers from '../utils/priceData';
  * @returns {*} value corresponding to key
  */
 function getStat(stats, code) {
+    if(!stats)
+        return "";
     var filtered = stats.filter(
         function (stat) {
             return stat.Code == code;
@@ -31,10 +33,11 @@ function getStat(stats, code) {
  * @returns {string}
  */
 function withLabel(label, stat, sign = false) {
+    if(!stat)
+        return "";
     if (sign && String(stat).charAt(0) != "-")
         stat = "+" + stat + " ";
-    else
-        return (["+ ", ""].indexOf(stat) == -1 ? label + ": " + stat : "");
+    return (["+ ", ""].indexOf(stat) == -1 ? label + ": " + stat : "");
 }
 
 /**
@@ -99,8 +102,8 @@ class ItemGraph extends Component {
                 //     // TODO remove outliers from calculation of mean using a filter function on the array
                 //
                 // });
-                if(stdDev == 0)
-                    stdDev = mean/4;
+                if (stdDev == 0)
+                    stdDev = mean / 4;
                 min = mean - 2 * stdDev;
                 max = mean + 2 * stdDev;
                 console.log(min);
@@ -261,6 +264,7 @@ class ItemInfo extends Component {
             classes: withLabel("Class", classes),
             races: withLabel("Race", races)
         };
+        console.log(lines);
 
         return (
             <div>

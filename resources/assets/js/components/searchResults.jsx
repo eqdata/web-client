@@ -48,7 +48,7 @@ class ResultItem extends Component {
             <div id="content-wrapper" className="well well-sm">
                 <h4><Link to={"/item/" + encodeURI(this.props.item)}>{this.props.item}</Link></h4>
                 <p>Average Price: {this.state.itemInfo.AveragePrice}<br />
-                    Last Seen: {d}</p>
+                    Last Seen: {d} ({this.state.aucInfo[0].Price}pp)</p>
             </div>
         );
     }

@@ -75,6 +75,7 @@ footer {
     padding: 7px;
     width: 100%;
     overflow: hidden;
+    min-height: 150px;
 }
 
 .itemicon {
