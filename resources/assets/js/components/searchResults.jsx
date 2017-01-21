@@ -45,10 +45,15 @@ class ResultItem extends Component {
             d = (helpers.timesince(new Date(this.state.aucInfo[0].Updated_at)) + " ago");
         }
         return (
-            <div id="content-wrapper" className="well well-sm">
+            <div id="content-wrapper" className="well well-sm well-hover col-xs-12 col-sm-12 col-md-12">
+                <div className="col-xs-10 col-sm-10 col-md-10">
                 <h4><Link to={"/item/" + encodeURI(this.props.item)}>{this.props.item}</Link></h4>
-                <p>Average Price: {this.state.itemInfo.AveragePrice}<br />
-                    Last Seen: {d} ({this.state.aucInfo[0].Price}pp)</p>
+                    <div>Average Price: {this.state.itemInfo.AveragePrice}<br />
+                        Most Recent Seller: {this.state.aucInfo[0].Seller}<br />
+                        Last Seen: {d} ({this.state.aucInfo[0].Price}pp)</div></div>
+                <div className="search-img"><img src={"https://wiki.project1999.com/" + this.state.itemInfo.Image}
+                                                 width="40" height="40"/></div>
+
             </div>
         );
     }
@@ -87,8 +92,8 @@ class SearchResults extends Component {
             return (
                 <div>
                     <a href="#" title="ajax:/tooltip/test">Some link</a>
-                <h2>No items were found using the phrase "{this.props.params.terms}"</h2>
-                    </div>
+                    <h2>No items were found using the phrase "{this.props.params.terms}"</h2>
+                </div>
             );
         return (
             <div>
