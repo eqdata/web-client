@@ -31,7 +31,7 @@
                 </ul>
             </div>
             <div class="text-center">
-                <small>&copy; EQData {{date("Y")}}</small>
+                <small>&copy; P99Tunnel.com {{date("Y")}}</small>
             </div>
         </div>
     </div>

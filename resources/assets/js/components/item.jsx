@@ -12,7 +12,7 @@ import priceHelpers from '../utils/priceData';
  * @returns {*} value corresponding to key
  */
 function getStat(stats, code) {
-    if(!stats)
+    if (!stats)
         return "";
     var filtered = stats.filter(
         function (stat) {
@@ -33,7 +33,7 @@ function getStat(stats, code) {
  * @returns {string}
  */
 function withLabel(label, stat, sign = false) {
-    if(!stat)
+    if (!stat)
         return "";
     if (sign && String(stat).charAt(0) != "-")
         stat = "+" + stat + " ";
@@ -50,6 +50,10 @@ function createEffect(effect) {
         return <span>Effect: <a href={effect.uri}>{effect.name}</a> {effect.restrict}</span>;
     else
         return null;
+}
+
+function annotateGraph(value) {
+
 }
 
 class RawAuctions extends Component {
@@ -106,9 +110,6 @@ class ItemGraph extends Component {
                     stdDev = mean / 4;
                 min = mean - 2 * stdDev;
                 max = mean + 2 * stdDev;
-                console.log(min);
-                console.log(max);
-                console.log(stdDev);
                 if (stdDev && mean && min && max)
                     resolve({
                         stdDev: stdDev,
@@ -134,11 +135,11 @@ class ItemGraph extends Component {
                         maxY = chartData[index][1];
                     index++;
                 }
-                // TODO 2nd param
                 chartData[index] = [stats.mean, null, 0, null];
                 chartData[index + 1] = [stats.mean, null, maxY, "Average (30 days): " + stats.mean.toString()];
+
                 if (chartData.length > 0)
-                    resolve(chartData)
+                    resolve(chartData);
                 else
                     reject("invalid chartData");
             }.bind(this));
@@ -173,7 +174,7 @@ class ItemGraph extends Component {
                         },
                         {
                             type: "number",
-                            label: "annotation-y"
+                            label: "average-y"
                         },
                         {
                             type: "string",
@@ -303,13 +304,21 @@ class ItemInfo extends Component {
  * Auction data information
  */
 class PriceInfo extends Component {
+
+    handleMouseEnter(p) {
+        console.log("Need to plot " + p );
+    }
+
+    handleMouseLeave() {
+        console.log("Remove plot");
+    }
+
     render() {
-        //alert('yo')
         var now = new Date();
         return (
-            <div className="row">
+            <div className="row" >
                 <h3>Auction History</h3>
-                <table id="price-info" className="table table-striped">
+                <table id="price-info" className="table table-striped table-hover">
                     <tbody>
                     <tr>
                         <th>Player</th>
@@ -325,7 +334,7 @@ class PriceInfo extends Component {
                         else
                             d = d.toString();
 
-                        return <tr key={auction.Created_at}>
+                        return <tr key={auction.Created_at}  onMouseLeave={this.handleMouseLeave} onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                             <td>{auction.Seller}</td>
                             <td>{auction.Price}</td>
                             <td>{auction.Quantity}</td>
@@ -333,7 +342,7 @@ class PriceInfo extends Component {
                                 to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
                             </td>
                         </tr>
-                    })}
+                    }.bind(this))}
                     </tbody>
                 </table>
             </div>

@@ -4,7 +4,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>EQData - Auctions</title>
+    <title>P99Tunnel- Auctions</title>
 
 
     <!-- Bootstrap Core CSS -->
