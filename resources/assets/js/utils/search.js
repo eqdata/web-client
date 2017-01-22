@@ -8,3 +8,8 @@ window.onload = function () {
         window.location.href = "/search/" + q;
     })
 }
+
+
+$(document).on('click',function(){
+    $('.collapse').collapse('hide');
+});
