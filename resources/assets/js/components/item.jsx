@@ -62,6 +62,7 @@ class RawAuctions extends Component {
 }
 
 class ItemGraph extends Component {
+    maxY = 0;
 
     componentWillMount() {
         var index = 0;
@@ -70,7 +71,6 @@ class ItemGraph extends Component {
         var mean = 0;
         var min = 0;
         var max = 0;
-        var maxY = 0;
 
         var prices = [];
         var prec = 10;
@@ -130,12 +130,12 @@ class ItemGraph extends Component {
                     chartData[index][3] = null;
                     chartData[index][4] = null;
                     chartData[index][5] = null;
-                    if (chartData[index][1] > maxY)
-                        maxY = chartData[index][1];
+                    if (chartData[index][1] > this.maxY)
+                        this.maxY = chartData[index][1];
                     index++;
                 }
                 chartData[index] = [stats.mean, null, 0, null, null, null];
-                chartData[index + 1] = [stats.mean, null, maxY, "Average (30 days): " + stats.mean.toString(), null, null];
+                chartData[index + 1] = [stats.mean, null, this.maxY, "Average (30 days): " + stats.mean.toLocaleString().toString() + "pp", null, null];
 
                 if (chartData.length > 0)
                     resolve(chartData);
@@ -157,10 +157,20 @@ class ItemGraph extends Component {
                 this.props.setGraphData({
                     options: {
                         title: 'Price Distribution',
-                        hAxis: {minorGridlines: {count: 6}},
-                        legend: 'none'
+                        hAxis: {
+                            minorGridlines: {count: 6},
+                            title: "Price (pp)"
+                        },
+                        vAxis: {
+                            textPosition: 'none',
+                        },
+                        legend: 'none',
+                        colors: [
+                            '#3366CC', 'B82E2E', 'green'
+                        ],
                     },
                     rows: chartData,
+
                     columns: [
                         {
                             type: "number",
@@ -199,13 +209,20 @@ class ItemGraph extends Component {
         console.log(this.props);
         // TODO Velium%20Crystal%20Staff is broken. Try commenting out each "then" to pinpoint the issue
         if (this.props.auctions && Array.isArray(this.props.graphData.rows) && this.props.graphData.rows.length > 0) {
-            this.props.graphData.rows = this.props.graphData.rows.filter(function(row){
+            var priceY = this.maxY;
+            this.props.graphData.rows = this.props.graphData.rows.filter(function (row) {
                 return row[5] == null;
             });
             if (this.props.price != 0) {
-                // TODO: change 0.001 to maxY (get from componentWillMount). find an intersection or actual max if possible
-                this.props.graphData.rows.push([this.props.price, null, null, null, 0, "Price"]);
-                this.props.graphData.rows.push([this.props.price, null, null, null, 0.001, " "]);
+                // calculate closest y point
+                this.props.graphData.rows.some(function (row) {
+                    if (row[0] >= this.props.price) {
+                        priceY = row[1];
+                        return true;
+                    }
+                }.bind(this));
+                this.props.graphData.rows.push([this.props.price, null, null, null, 0, " "]);
+                this.props.graphData.rows.push([this.props.price, null, null, null, priceY, this.props.price.toLocaleString().toString() + "pp"]);
             }
             return (
                 <Chart
@@ -287,7 +304,7 @@ class ItemInfo extends Component {
         return (
             <div>
                 <div className="itemtopbg">
-                    <div className="itemtitle">{this.props.item.Name}</div>
+                    <div className="itemtitle">{decodeURIComponent(this.props.item.Name).replace(/_/g, " ")}</div>
                 </div>
                 <div className="itembg">
                     <div className="itemdata">
@@ -356,7 +373,7 @@ class PriceInfo extends Component {
                         return <tr key={auction.Created_at} onMouseLeave={this.handleMouseLeave.bind(this)}
                                    onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                             <td>{auction.Seller}</td>
-                            <td>{auction.Price}</td>
+                            <td>{auction.Price.toLocaleString()}pp</td>
                             <td>{auction.Quantity}</td>
                             <td><Link
                                 to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
@@ -374,14 +391,14 @@ class PriceInfo extends Component {
  * Item statistics that appear below item box
  */
 class ItemAuctionStats extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             hoverPrice: 0
         }
     };
 
-    plotHoverPrice(newPrice){
+    plotHoverPrice(newPrice) {
         this.setState({
             hoverPrice: newPrice
         });
@@ -411,7 +428,8 @@ class ItemAuctionStats extends Component {
             return (
                 <div className="row">
                     <div className="col-md-5">
-                        <PriceInfo auctions={this.props.auctions} item={this.props.item} graphFunc={this.plotHoverPrice.bind(this)}/>
+                        <PriceInfo auctions={this.props.auctions} item={this.props.item}
+                                   graphFunc={this.plotHoverPrice.bind(this)}/>
                     </div>
                     <div className="col-md-7">
                         <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData}
@@ -481,7 +499,7 @@ class Item extends Component {
                 <div>
                     <div className="row">
                         <h1 id="page-title" className="page-header">
-                            {this.state.item.Name}
+                            {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")}
                         </h1>
                         <ItemInfo item={this.state.item}/>
                     </div>

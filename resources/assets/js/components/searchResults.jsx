@@ -52,8 +52,8 @@ class ResultItem extends Component {
             <Link to={"/item/" + encodeURI(this.props.item)}>
             <div id="content-wrapper" className="well well-sm well-hover col-xs-12 col-sm-12 col-md-12">
                 <div className="col-xs-10 col-sm-10 col-md-10 search">
-                <h4>{this.props.item}</h4>
-                    <div className="search-desc">Average Price: {this.state.itemInfo.AveragePrice}<br />
+                <h4>{decodeURIComponent(this.props.item).replace(/_/g, " ")}</h4>
+                    <div className="search-desc">
                         Most Recent Seller: {seller}<br />
                         Last Seen: {d} {price}</div></div>
                 <div className="search-img"><img src={"https://wiki.project1999.com/" + this.state.itemInfo.Image}

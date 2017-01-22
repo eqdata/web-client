@@ -78,18 +78,16 @@ class AuctionFeed extends React.Component {
         return (
             <div>
                 <h1 id="page-title" className="page-header">
-                    Live Auction Feed
+                    Live Auction Feed - {this.state.gameServer} Server
                 </h1>
-                <div className="text-center">
-                    <button onClick={this.switchServer.bind(this)}
-                            className={"btn btn-sm " + (this.state.gameServer == "Blue" ? "btn-danger" : "btn-primary")}>
-                        Switch
-                        to {this.state.gameServer == "Blue" ? "Red" : "Blue"} Server
-                    </button>
-                </div>
-                <br />
+
                 <div className="auction-box" id="auction-box">
                     <div className="floatright">
+                        <button onClick={this.switchServer.bind(this)}
+                                className={"btn btn-xs " + (this.state.gameServer == "Blue" ? "btn-danger" : "btn-primary")}>
+                            Switch
+                            to {this.state.gameServer == "Blue" ? "Red" : "Blue"} Server
+                        </button> &nbsp;
                         <button className="btn btn-xs"><span id="fullscreen-icon" onMouseUp={this.fullscreenToggle} className="glyphicon glyphicon-fullscreen"/></button>
                     </div>
                     <div className="auction-loading">LOADING, PLEASE WAIT...</div>
