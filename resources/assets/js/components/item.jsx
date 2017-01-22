@@ -52,9 +52,6 @@ function createEffect(effect) {
         return null;
 }
 
-function annotateGraph(value) {
-
-}
 
 class RawAuctions extends Component {
     render() {
@@ -85,7 +82,7 @@ class ItemGraph extends Component {
                     this.props.auctions.forEach(function (auc) {
                         var priceDate = new Date(auc.Updated_at);
                         // only include auctions in last 30 days
-                        if (auc.Price > 0 && Math.ceil((now - priceDate) / 1000 / 60 / 60 / 24) < 2)
+                        if (auc.Price > 0 && Math.ceil((now - priceDate) / 1000 / 60 / 60 / 24) < 30)
                             prices.push(auc.Price);
                     });
 
@@ -108,8 +105,8 @@ class ItemGraph extends Component {
                 // });
                 if (stdDev == 0)
                     stdDev = mean / 4;
-                min = mean - 2 * stdDev;
-                max = mean + 2 * stdDev;
+                min = mean - 3 * stdDev;
+                max = mean + 3 * stdDev;
                 if (stdDev && mean && min && max)
                     resolve({
                         stdDev: stdDev,
@@ -126,17 +123,19 @@ class ItemGraph extends Component {
             return new Promise(function (resolve, reject) {
                 // normalize price range
                 for (var i = stats.min; i < stats.max; i += Math.floor(stdDev / 50)) {
-                    chartData[index] = new Array(4);
+                    chartData[index] = new Array(6);
                     chartData[index][0] = i;
                     chartData[index][1] = priceHelpers.NormalDensityZx(i, stats.mean, stats.stdDev);
                     chartData[index][2] = null;
                     chartData[index][3] = null;
+                    chartData[index][4] = null;
+                    chartData[index][5] = null;
                     if (chartData[index][1] > maxY)
                         maxY = chartData[index][1];
                     index++;
                 }
-                chartData[index] = [stats.mean, null, 0, null];
-                chartData[index + 1] = [stats.mean, null, maxY, "Average (30 days): " + stats.mean.toString()];
+                chartData[index] = [stats.mean, null, 0, null, null, null];
+                chartData[index + 1] = [stats.mean, null, maxY, "Average (30 days): " + stats.mean.toString(), null, null];
 
                 if (chartData.length > 0)
                     resolve(chartData);
@@ -155,7 +154,6 @@ class ItemGraph extends Component {
             console.log("normalize error: " + err);
         }.bind(this))
             .then(function () {
-                console.log('setting state');
                 this.props.setGraphData({
                     options: {
                         title: 'Price Distribution',
@@ -179,6 +177,14 @@ class ItemGraph extends Component {
                         {
                             type: "string",
                             role: "annotation"
+                        },
+                        {
+                            type: "number",
+                            label: "cost-y"
+                        },
+                        {
+                            type: "string",
+                            role: "annotation"
                         }
                     ],
                     annotations: {
@@ -189,7 +195,18 @@ class ItemGraph extends Component {
     }
 
     render() {
+        console.log("RENDERING GRAPH INFO");
+        console.log(this.props);
+        // TODO Velium%20Crystal%20Staff is broken. Try commenting out each "then" to pinpoint the issue
         if (this.props.auctions && Array.isArray(this.props.graphData.rows) && this.props.graphData.rows.length > 0) {
+            this.props.graphData.rows = this.props.graphData.rows.filter(function(row){
+                return row[5] == null;
+            });
+            if (this.props.price != 0) {
+                // TODO: change 0.001 to maxY (get from componentWillMount). find an intersection or actual max if possible
+                this.props.graphData.rows.push([this.props.price, null, null, null, 0, "Price"]);
+                this.props.graphData.rows.push([this.props.price, null, null, null, 0.001, " "]);
+            }
             return (
                 <Chart
                     chartType="AreaChart"
@@ -306,17 +323,19 @@ class ItemInfo extends Component {
 class PriceInfo extends Component {
 
     handleMouseEnter(p) {
-        console.log("Need to plot " + p );
+        this.props.graphFunc(p);
+        console.log("Need to plot " + p);
     }
 
     handleMouseLeave() {
+        this.props.graphFunc(0);
         console.log("Remove plot");
     }
 
     render() {
         var now = new Date();
         return (
-            <div className="row" >
+            <div className="row">
                 <h3>Auction History</h3>
                 <table id="price-info" className="table table-striped table-hover">
                     <tbody>
@@ -334,7 +353,8 @@ class PriceInfo extends Component {
                         else
                             d = d.toString();
 
-                        return <tr key={auction.Created_at}  onMouseLeave={this.handleMouseLeave} onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
+                        return <tr key={auction.Created_at} onMouseLeave={this.handleMouseLeave.bind(this)}
+                                   onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                             <td>{auction.Seller}</td>
                             <td>{auction.Price}</td>
                             <td>{auction.Quantity}</td>
@@ -354,11 +374,23 @@ class PriceInfo extends Component {
  * Item statistics that appear below item box
  */
 class ItemAuctionStats extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            hoverPrice: 0
+        }
+    };
+
+    plotHoverPrice(newPrice){
+        this.setState({
+            hoverPrice: newPrice
+        });
+    };
+
     render() {
-        console.log("Props is: ", this.props)
         // no auctions
         if (this.props.auctions.length == 0) {
-            console.log("NO AUCTIONS FOUND");
+            // console.log("NO AUCTIONS FOUND");
             return (<div>
                 <h2 id="page-title" className="page-header">
                     No auctions found
@@ -367,7 +399,7 @@ class ItemAuctionStats extends Component {
         }
         // render raw auctions
         else if (typeof this.props.raw !== "undefined") {
-            console.log("RENDERING RAW AUCTIONS");
+            // console.log("RENDERING RAW AUCTIONS");
             return (
                 <div className="row">
                     <RawAuctions rawAuctions={this.props.rawAuctionId} item={this.props.item}/>
@@ -375,15 +407,15 @@ class ItemAuctionStats extends Component {
             );
         } else {
             // render price history and graph
-            console.log("RENDERING PRICE HISTORY");
+            // console.log("RENDERING PRICE HISTORY");
             return (
                 <div className="row">
                     <div className="col-md-5">
-                        <PriceInfo auctions={this.props.auctions} item={this.props.item}/>
+                        <PriceInfo auctions={this.props.auctions} item={this.props.item} graphFunc={this.plotHoverPrice.bind(this)}/>
                     </div>
                     <div className="col-md-7">
                         <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData}
-                                   auctions={this.props.auctions} item={this.props.item}/>
+                                   auctions={this.props.auctions} item={this.props.item} price={this.state.hoverPrice}/>
                     </div>
                 </div>
             )

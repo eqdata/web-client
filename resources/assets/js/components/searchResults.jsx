@@ -41,20 +41,25 @@ class ResultItem extends Component {
 
     render() {
         var d = "never";
-        if (this.state.aucInfo) {
+        var seller = "n/a";
+        var price = "";
+        if (this.state.aucInfo != "none") {
             d = (helpers.timesince(new Date(this.state.aucInfo[0].Updated_at)) + " ago");
+            seller = this.state.aucInfo[0].Seller;
+            price = "("+this.state.aucInfo[0].Price + "pp)";
         }
         return (
+            <Link to={"/item/" + encodeURI(this.props.item)}>
             <div id="content-wrapper" className="well well-sm well-hover col-xs-12 col-sm-12 col-md-12">
-                <div className="col-xs-10 col-sm-10 col-md-10">
-                <h4><Link to={"/item/" + encodeURI(this.props.item)}>{this.props.item}</Link></h4>
-                    <div>Average Price: {this.state.itemInfo.AveragePrice}<br />
-                        Most Recent Seller: {this.state.aucInfo[0].Seller}<br />
-                        Last Seen: {d} ({this.state.aucInfo[0].Price}pp)</div></div>
+                <div className="col-xs-10 col-sm-10 col-md-10 search">
+                <h4>{this.props.item}</h4>
+                    <div className="search-desc">Average Price: {this.state.itemInfo.AveragePrice}<br />
+                        Most Recent Seller: {seller}<br />
+                        Last Seen: {d} {price}</div></div>
                 <div className="search-img"><img src={"https://wiki.project1999.com/" + this.state.itemInfo.Image}
                                                  width="40" height="40"/></div>
 
-            </div>
+            </div></Link>
         );
     }
 }
