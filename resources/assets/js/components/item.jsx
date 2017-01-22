@@ -538,6 +538,7 @@ class Item extends Component {
                             <div className="col-md-7">
                                 <ItemInfo item={this.state.item}/>
                             </div>
+                            <div className="hidden-lg hidden-md hidden-sm">&nbsp;</div>
                             <div className="col-md-5">
                                 <AuctionStats auctions={this.state.auctions}/>
                             </div>
