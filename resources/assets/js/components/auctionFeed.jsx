@@ -4,9 +4,11 @@ import client from 'socket.io-client';
 require("../utils/ajaxtooltip");
 
 class AuctionFeed extends React.Component {
+    switched = false;
+
     constructor(props) {
         super(props);
-        this.state = {messages: [], connected: false, gameServer: "Blue", switched: false};
+        this.state = {messages: [], connected: false, gameServer: "Blue"};
     }
 
     socketConnect() {
@@ -17,7 +19,12 @@ class AuctionFeed extends React.Component {
         }.bind(this));
 
         this.socket.on('join', function (data) {
-            this.setState({messages: data.auctions.PreviousAuctions, connected: true, gameServer: this.state.gameServer, switched: false});
+            this.setState({
+                messages: data.auctions.PreviousAuctions,
+                connected: true,
+                gameServer: this.state.gameServer,
+                switched: false
+            });
         }.bind(this));
 
         this.socket.on('auctions-updated', function (data) {
@@ -39,10 +46,10 @@ class AuctionFeed extends React.Component {
 
 
     componentWillUpdate() {
-        if (this.state.switched) {
+        if (this.switched) {
             this.socket.disconnect();
+            this.switched = false;
             this.socketConnect();
-            this.setState({messages: this.state.messages, connected: this.state.connected, gameServer: this.state.gameServer, switched: false})
         }
     }
 
@@ -53,11 +60,17 @@ class AuctionFeed extends React.Component {
     }
 
     switchServer() {
-        console.log("switching servers");
+        this.switched = true;
         if (this.state.gameServer == "Red")
-            this.setState({messages: [], connected: false, gameServer: "Blue", switched: true});
+            this.setState({messages: [], connected: false, gameServer: "Blue"});
         else
-            this.setState({messages: [], connected: false, gameServer: "Red", switched: true});
+            this.setState({messages: [], connected: false, gameServer: "Red"});
+    }
+
+    fullscreenToggle(){
+        document.getElementById("auction-box").classList.toggle('fullscreen');
+        document.getElementById("fullscreen-icon").classList.toggle('glyphicon-unchecked');
+        document.getElementById("fullscreen-icon").classList.toggle('glyphicon-fullscreen');
     }
 
     render() {
@@ -69,13 +82,16 @@ class AuctionFeed extends React.Component {
                 </h1>
                 <div className="text-center">
                     <button onClick={this.switchServer.bind(this)}
-                        className={"btn btn-sm " + (this.state.gameServer == "Blue" ? "btn-danger" : "btn-primary")}>
+                            className={"btn btn-sm " + (this.state.gameServer == "Blue" ? "btn-danger" : "btn-primary")}>
                         Switch
                         to {this.state.gameServer == "Blue" ? "Red" : "Blue"} Server
                     </button>
                 </div>
                 <br />
                 <div className="auction-box" id="auction-box">
+                    <div className="floatright">
+                        <button className="btn btn-xs"><span id="fullscreen-icon" onMouseUp={this.fullscreenToggle} className="glyphicon glyphicon-fullscreen"/></button>
+                    </div>
                     <div className="auction-loading">LOADING, PLEASE WAIT...</div>
                     { this.state.connected ?
                         <div className="auction-connected">You have entered East Commonlands.</div> : <div></div>}
