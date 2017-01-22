@@ -63,12 +63,12 @@ class RawAuctions extends Component {
 
 class ItemGraph extends Component {
     maxY = 0;
+    mean = 0;
 
     componentWillMount() {
         var index = 0;
         var chartData = [];
         var stdDev = 0;
-        var mean = 0;
         var min = 0;
         var max = 0;
 
@@ -98,19 +98,19 @@ class ItemGraph extends Component {
         var generateStats = function (prices) {
             return new Promise(function (resolve, reject) {
                 stdDev = priceHelpers.getStandardDeviation(prices, prec);
-                mean = Math.floor(priceHelpers.arrayMean(prices));
+                this.mean = Math.floor(priceHelpers.arrayMean(prices));
                 // var pricesFiltered = prices.filter(function (price) {
                 //     // TODO remove outliers from calculation of mean using a filter function on the array
                 //
                 // });
                 if (stdDev == 0)
                     stdDev = mean / 4;
-                min = mean - 3 * stdDev;
-                max = mean + 3 * stdDev;
-                if (stdDev && mean && min && max)
+                min = this.mean - 3 * stdDev;
+                max = this.mean + 3 * stdDev;
+                if (stdDev && this.mean && min && max)
                     resolve({
                         stdDev: stdDev,
-                        mean: mean,
+                        mean: this.mean,
                         min: min,
                         max: max
                     });
@@ -206,9 +206,6 @@ class ItemGraph extends Component {
     }
 
     render() {
-        console.log("RENDERING GRAPH INFO");
-        console.log(this.props);
-        // TODO Velium%20Crystal%20Staff is broken. Try commenting out each "then" to pinpoint the issue
         if (this.props.auctions && Array.isArray(this.props.graphData.rows) && this.props.graphData.rows.length > 0) {
             var priceY = this.maxY;
             this.props.graphData.rows = this.props.graphData.rows.filter(function (row) {
@@ -224,6 +221,7 @@ class ItemGraph extends Component {
                 }.bind(this));
                 this.props.graphData.rows.push([this.props.price, null, null, null, 0, " "]);
                 this.props.graphData.rows.push([this.props.price, null, null, null, priceY, this.props.price.toLocaleString().toString() + "pp"]);
+                this.props.graphData.rows.push([this.mean, null, null, null, priceY, " "]);
             }
             return (
                 <Chart
