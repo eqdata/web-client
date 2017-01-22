@@ -168,6 +168,7 @@ class ItemGraph extends Component {
                         colors: [
                             '#3366CC', 'B82E2E', 'green'
                         ],
+                        chartArea: {'width': '100%', 'height': '80%'}
                     },
                     rows: chartData,
 
@@ -243,8 +244,45 @@ class ItemGraph extends Component {
     }
 }
 
+class AuctionStats extends Component {
+
+    render() {
+        var d = "never";
+        var seller = "n/a";
+        var price = "n/a";
+        var average = {
+            week: "n/a",
+            month: "n/a",
+            all: "n/a"
+        };
+
+        if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
+            console.log(this.props.auctions);
+            seller = this.props.auctions[0].Seller;
+            price = this.props.auctions[0].Price.toLocaleString() + "pp";
+            d = (helpers.prettyDate(new Date(this.props.auctions[0].Updated_at)));
+            average.week = priceHelpers.timeMean(this.props.auctions, "week").toLocaleString() + "pp";
+            average.month = priceHelpers.timeMean(this.props.auctions, "month").toLocaleString() + "pp";
+            average.all = priceHelpers.timeMean(this.props.auctions, "all").toLocaleString() + "pp";
+        }
+        return (
+            <div className="well search">
+                <h4>Auction Statistics</h4>
+                <p>
+                    Last Seen: <span className="textright">{d}</span><br/>
+                    Last Seller: <span className="textright">{seller}</span><br />
+                    Last Price: <span className="textright">{price}</span><br />
+                    Average (week): <span className="textright">{average.week}</span><br />
+                    Average (month): <span className="textright">{average.month}</span><br />
+                    Average (all time): <span className="textright">{average.all}</span><br />
+                </p>
+            </div>
+        );
+    }
+}
+
 /**
- * Item information box.
+ * Item information.
  */
 class ItemInfo extends Component {
 
@@ -299,16 +337,17 @@ class ItemInfo extends Component {
             classes: withLabel("Class", classes),
             races: withLabel("Race", races)
         };
-        console.log(lines);
 
         return (
-            <div>
-                <div className="itemtopbg">
-                    <div className="itemtitle">{decodeURIComponent(this.props.item.Name).replace(/_/g, " ")}</div>
+
+            <div className="item-info">
+                <div className="item-top-bg">
+                    <div
+                        className="item-title">{decodeURIComponent(this.props.item.Name).replace(/_/g, " ")}</div>
                 </div>
-                <div className="itembg">
-                    <div className="itemdata">
-                        <div className="itemicon">
+                <div className="item-bg">
+                    <div className="item-data">
+                        <div className="item-icon">
                             <div className="floatright"><img alt={this.props.item.Image.replace("/images/", "")}
                                                              src={"https://wiki.project1999.com/" + this.props.item.Image}
                                                              width="40" height="40"/></div>
@@ -328,7 +367,7 @@ class ItemInfo extends Component {
                         </p>
                     </div>
                 </div>
-                <div className="itembotbg"></div>
+                <div className="item-bot-bg"></div>
             </div>
         );
     }
@@ -337,7 +376,7 @@ class ItemInfo extends Component {
 /**
  * Auction data information
  */
-class PriceInfo extends Component {
+class AuctionHistory extends Component {
 
     handleMouseEnter(p) {
         this.props.graphFunc(p);
@@ -350,11 +389,10 @@ class PriceInfo extends Component {
     }
 
     render() {
-        var now = new Date();
         return (
-            <div className="row">
+            <div>
                 <h3>Auction History</h3>
-                <table id="price-info" className="table table-striped table-hover">
+                <table id="price-info" className="table table-striped table-hover search">
                     <tbody>
                     <tr>
                         <th>Player</th>
@@ -364,11 +402,7 @@ class PriceInfo extends Component {
                     </tr>
                     {this.props.auctions.map(function (auction) {
                         // format date
-                        var d = new Date(auction.Updated_at);
-                        if (Math.ceil(((now - d) / 1000) / 60) < 59)
-                            d = helpers.timesince(d) + " ago";
-                        else
-                            d = d.toString();
+                        var d = helpers.prettyDate(new Date(auction.Updated_at));
 
                         return <tr key={auction.Created_at} onMouseLeave={this.handleMouseLeave.bind(this)}
                                    onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
@@ -427,11 +461,11 @@ class ItemAuctionStats extends Component {
             // console.log("RENDERING PRICE HISTORY");
             return (
                 <div className="row">
-                    <div className="col-md-5">
-                        <PriceInfo auctions={this.props.auctions} item={this.props.item}
-                                   graphFunc={this.plotHoverPrice.bind(this)}/>
-                    </div>
                     <div className="col-md-7">
+                        <AuctionHistory auctions={this.props.auctions} item={this.props.item}
+                                        graphFunc={this.plotHoverPrice.bind(this)}/>
+                    </div>
+                    <div className="col-md-5">
                         <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData}
                                    auctions={this.props.auctions} item={this.props.item} price={this.state.hoverPrice}/>
                     </div>
@@ -452,7 +486,8 @@ class Item extends Component {
             item: [],
             auctions: [],
             raw: false,
-            graphData: {}
+            graphData: {},
+            average: 0
         };
     }
 
@@ -501,7 +536,14 @@ class Item extends Component {
                         <h1 id="page-title" className="page-header">
                             {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")}
                         </h1>
-                        <ItemInfo item={this.state.item}/>
+                        <div>
+                            <div className="col-md-7">
+                                <ItemInfo item={this.state.item}/>
+                            </div>
+                            <div className="col-md-5">
+                                <AuctionStats auctions={this.state.auctions}/>
+                            </div>
+                        </div>
                     </div>
                     <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions}
                                       graphData={this.state.graphData}

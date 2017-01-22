@@ -44,9 +44,9 @@ class ResultItem extends Component {
         var seller = "n/a";
         var price = "";
         if (this.state.aucInfo != "none") {
-            d = (helpers.timesince(new Date(this.state.aucInfo[0].Updated_at)) + " ago");
+            d = (helpers.prettyDate(new Date(this.state.aucInfo[0].Updated_at)));
             seller = this.state.aucInfo[0].Seller;
-            price = "("+this.state.aucInfo[0].Price + "pp)";
+            price = "("+this.state.aucInfo[0].Price.toLocaleString() + "pp)";
         }
         return (
             <Link to={"/item/" + encodeURI(this.props.item)}>

@@ -75,7 +75,7 @@ module.exports = {
                     if (httpRequest.responseText === null) {
                         deferred.reject(Error(httpRequest.statusText));
                     }
-                    deferred.resolve({ data: parsers.get(t)(httpRequest.responseText) });
+                    deferred.resolve({data: parsers.get(t)(httpRequest.responseText)});
                 } else {
                     deferred.reject(Error(httpRequest.statusText));
                 }
@@ -85,16 +85,16 @@ module.exports = {
         httpRequest.send(requestData);
         return deferred.promise;
     },
-    generateSlug: function(element) {
+    generateSlug: function (element) {
         return document.getElementById('url-slug').value = this.convertToSlug(element.value);
     },
-    convertToSlug: function(Text) {
+    convertToSlug: function (Text) {
         return Text
             .toLowerCase()
-            .replace(/[^\w ]+/g,'')
-            .replace(/ +/g,'-');
+            .replace(/[^\w ]+/g, '')
+            .replace(/ +/g, '-');
     },
-    debounce: function(fn, delay) {
+    debounce: function (fn, delay) {
         var timer = null;
         return function () {
             var context = this, args = arguments;
@@ -105,7 +105,7 @@ module.exports = {
         };
     },
     // http://stackoverflow.com/a/133997/826479
-    post: function(path, params, method) {
+    post: function (path, params, method) {
         method = method || "post"; // Set method to post by default if not specified.
 
         var form = document.createElement("form");
@@ -119,8 +119,8 @@ module.exports = {
 
         form.appendChild(hiddenField);
 
-        for(var key in params) {
-            if(params.hasOwnProperty(key)) {
+        for (var key in params) {
+            if (params.hasOwnProperty(key)) {
                 hiddenField = document.createElement("input");
                 hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", key);
@@ -133,7 +133,7 @@ module.exports = {
         document.body.appendChild(form);
         form.submit();
     },
-    timesince: function(date){
+    timesince: function (date) {
         var seconds = Math.floor((new Date() - date) / 1000);
 
         var interval = Math.floor(seconds / 31536000);
@@ -158,5 +158,44 @@ module.exports = {
             return interval + " minutes";
         }
         return Math.floor(seconds) + " seconds";
+    },
+    dateString: function (date) {
+        var monthNames = [
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+
+        return monthNames[monthIndex] + " " + day + ", " + year;
+    },
+    prettyDate: function (date) {
+        if(!(date instanceof Date))
+            return "";
+
+        var seconds = Math.floor((new Date() - date) / 1000);
+
+        var interval = Math.floor(seconds / 31536000); // seconds in a year
+
+        if (interval > 1) {
+            return interval + " years ago";
+        }
+
+        interval = Math.floor(seconds / 86400); // seconds in a day
+        if (interval > 1) {
+            return this.dateString(date)
+        }
+        interval = Math.floor(seconds / 3600);
+        if (interval > 1) {
+            return interval + " hours ago";
+        }
+        interval = Math.floor(seconds / 60);
+        if (interval > 1) {
+            return interval + " minutes ago";
+        }
+        return Math.floor(seconds) + " seconds ago";
     }
 };
