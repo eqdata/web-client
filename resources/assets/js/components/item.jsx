@@ -56,7 +56,7 @@ function createEffect(effect) {
 class RawAuctions extends Component {
     render() {
         return (
-            <h2>Put raw auctions here and highlight the one in question if specified</h2>
+            <h2>TODO: Put raw auctions here and highlight the one in question if specified (need endpoint and rawAuc ID on auction)</h2>
         )
     };
 }
@@ -237,7 +237,7 @@ class ItemGraph extends Component {
                 />
             );
         } else {
-            return (<div>Invalid pricing data</div>);
+            return (<div>Not enough data to graph</div>);
         }
     }
 }
@@ -489,6 +489,43 @@ class Item extends Component {
         };
     }
 
+    /**
+     * Remove auctions from the same seller within 24 hour periods
+     * NOTE: assumes descending order by date. Only newest auctions are kept.
+     * @param auctions
+     */
+    sanitizeAuctions(auctions) {
+        var currentMonth = "";
+        var currentDay = "";
+        var currentYear = "";
+        var date = null;
+        var daysSellers = [];
+        var sanitizedAuctions = [];
+        var duplicate = false;
+        auctions.forEach(function (auction) {
+            date = new Date(auction.Updated_at);
+            // if current day
+            if (date.getDay() == currentDay && date.getYear() == currentYear && date.getMonth() == currentMonth) {
+                // check if duplicate
+                duplicate = daysSellers.some(function (seller) {
+                    return seller.Seller == auction.Seller;
+                });
+                // if not, push it
+                if(!duplicate) {
+                    daysSellers.push(auction);
+                }
+            } else {
+                // next day
+                currentDay = date.getDay();
+                currentMonth = date.getMonth();
+                currentYear = date.getYear();
+                sanitizedAuctions = sanitizedAuctions.concat(daysSellers);
+                daysSellers[0] = auction;
+            }
+        });
+        return sanitizedAuctions.concat(daysSellers);
+    }
+
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
@@ -510,7 +547,10 @@ class Item extends Component {
             cache: false,
             type: "GET",
         }).then(function (payload) {
-            this.setState({auctions: payload.data.Auctions});
+            // TODO remove duplicates (name is the same within 24 hours) Do it for every day (instead of trying to check for auctions
+            //todo within 24 hours of each other.
+            //todo  during the loop, make a nested loop for each day and remove duplicate sellers
+            this.setState({auctions: this.sanitizeAuctions(payload.data.Auctions)});
         }.bind(this), function (err) {
             console.log("error: " + err);
         });

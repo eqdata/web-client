@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return View::make('pages.home');
+    return View::make('pages.home')->with('index', true);
 });
 Route::get('tooltip/{name}', 'TooltipController@getAuctionStats');
 Route::get('/{path?}', function($path = null){

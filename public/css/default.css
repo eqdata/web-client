@@ -6,6 +6,26 @@ body {
     padding-top: 70px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
 
+body.index{
+    background-image: url(/images/tunnel.png);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.index-text{
+    padding-bottom: 50px;
+}
+
+.index-text h1, h5{
+    font-family: 'Source Sans Pro Semibold', 'Lato', sans-serif;
+    color: white;
+}
+
+.big-search{
+    border-radius: 5px !important;
+}
+
 footer {
     position: relative;
     margin-top: -150px; /* negative value of footer height */
@@ -94,7 +114,7 @@ footer {
 }
 
 .pushdown {
-    margin-top: 20%;
+    margin-top: 15%;
 }
 
 .loader {

@@ -4,7 +4,7 @@
     @include('includes.head')
 </head>
 
-<body>
+<body {{isset($index) && $index ? "class=index" : ""}}>
 @include('includes.header')
 
 <!-- Page Content -->
@@ -15,7 +15,9 @@
         </div>
     </div>
 </div>
-@include('includes.footer')
+@if(!isset($index) || !$index)
+    @include('includes.footer')
+@endif
 <!-- /.container -->
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
