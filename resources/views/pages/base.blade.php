@@ -8,7 +8,7 @@
     </div>
 
     <!-- Blog Sidebar Widgets Column -->
-    <div id="sidebar-container" class="col-xs-12 col-sm-3 col-md-3">
+    <div id="sidebar-container" class="sidebar-container col-xs-12 col-sm-3 col-md-3">
         @include('includes.sidebar')
     </div>
 @stop

@@ -237,7 +237,7 @@ class ItemGraph extends Component {
                 />
             );
         } else {
-            return (<div>Not enough data to graph</div>);
+            return (<h3>Not enough data to graph</h3>);
         }
     }
 }
