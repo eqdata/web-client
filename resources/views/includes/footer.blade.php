@@ -30,7 +30,7 @@
                 </ul>
             </div>
             <div class="text-center">
-                <small>&copy; P99Tunnel.com {{date("Y")}}</small>
+                <small>&copy; {{date("Y")}} P99Tunnel Development Team </small>
             </div>
     </div>
 </footer>

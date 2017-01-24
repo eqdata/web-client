@@ -501,9 +501,9 @@ class Item extends Component {
         var date = null;
         var daysSellers = [];
         var sanitizedAuctions = [];
-        var duplicate = false;
         auctions.forEach(function (auction) {
             date = new Date(auction.Updated_at);
+            var duplicate = false;
             // if current day
             if (date.getDay() == currentDay && date.getYear() == currentYear && date.getMonth() == currentMonth) {
                 // check if duplicate
