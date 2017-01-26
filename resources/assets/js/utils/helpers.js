@@ -159,7 +159,7 @@ module.exports = {
         }
         return Math.floor(seconds) + " seconds";
     },
-    dateString: function (date) {
+    dateString: function (date, showYear = true) {
         var monthNames = [
             "Jan", "Feb", "Mar",
             "Apr", "May", "Jun", "Jul",
@@ -170,7 +170,7 @@ module.exports = {
         var monthIndex = date.getMonth();
         var year = date.getFullYear();
 
-        return monthNames[monthIndex] + " " + day + ", " + year;
+        return monthNames[monthIndex] + " " + day + (showYear ? (", " + year) : "");
     },
     prettyDate: function (date) {
         if(!(date instanceof Date))
@@ -183,10 +183,13 @@ module.exports = {
         if (interval > 1) {
             return interval + " years ago";
         }
-
+        interval = Math.floor(seconds / 2592000);
+        if (interval > 1) {
+            return this.dateString(date, false)
+        }
         interval = Math.floor(seconds / 86400); // seconds in a day
         if (interval > 1) {
-            return this.dateString(date)
+            return interval + " days ago";
         }
         interval = Math.floor(seconds / 3600);
         if (interval > 1) {

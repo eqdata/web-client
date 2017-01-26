@@ -290,6 +290,20 @@ footer {
     z-index: 1000;
 }
 
+.auction-buttons-container {
+    margin: 0 0 .5em .5em;
+    border: 0;
+    position: relative;
+    clear: right;
+    float: right;
+    width: 160px;
+}
+
+.auction-buttons {
+    position: fixed;
+    width: 160px;
+}
+
 .fullscreen{
     z-index: 9999;
     width: 100%;
@@ -313,21 +327,44 @@ footer {
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 
-.auction-message.a{
+.auction-message a{
     color: magenta;
-    font-weight: bold;
 }
 
-.ajaxtooltip{
-    position: absolute; /*leave this alone*/
-    display: none; /*leave this alone*/
-    width: 300px;
-    left: 0; /*leave this alone*/
-    top: 0; /*leave this alone*/
-    background: lightyellow;
-    border: 2px solid gray;
-    border-width: 1px 2px 2px 1px;
-    padding: 5px;
+a.tooltips {
+    position: relative;
+    display: inline;
+}
+a.tooltips span {
+    position: absolute;
+    min-width:140px;
+    width: 200px;
+    color: #030303;
+    background: #FF7E3D;
+    /*height: 30px;*/
+    /*line-height: 30px;*/
+    text-align: center;
+    visibility: hidden;
+    border-radius: 6px;
+}
+a.tooltips span:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -8px;
+    width: 0; height: 0;
+    border-top: 8px solid #FF7E3D;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+}
+a:hover.tooltips span {
+    visibility: visible;
+    opacity: 0.8;
+    bottom: 30px;
+    left: 50%;
+    margin-left: -76px;
+    z-index: 999;
 }
 
 

@@ -96,7 +96,6 @@ class SearchResults extends Component {
         else
             return (
                 <div>
-                    <a href="#" title="ajax:/tooltip/test">Some link</a>
                     <h2>No items were found using the phrase "{this.props.params.terms}"</h2>
                 </div>
             );

@@ -404,7 +404,7 @@ class AuctionHistory extends Component {
 
             rows.push(<tr key={i} onMouseLeave={this.handleMouseLeave.bind(this)}
                         onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
-                <td>{auction.Seller}</td>
+                <td><Link to={"/seller/SERVER/" + auction.Seller}>{auction.Seller}</Link></td>
                 <td>{auction.Price.toLocaleString()}pp</td>
                 <td>{auction.Quantity}</td>
                 <td><Link
