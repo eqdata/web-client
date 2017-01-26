@@ -56,7 +56,8 @@ function createEffect(effect) {
 class RawAuctions extends Component {
     render() {
         return (
-            <h2>TODO: Put raw auctions here and highlight the one in question if specified (need endpoint and rawAuc ID on auction)</h2>
+            <h2>TODO: Put raw auctions here and highlight the one in question if specified (need endpoint and rawAuc ID
+                on auction)</h2>
         )
     };
 }
@@ -121,8 +122,9 @@ class ItemGraph extends Component {
 
         var normalize = function (stats) {
             return new Promise(function (resolve, reject) {
+                var resolution = Math.ceil((stats.max - stats.min) / 100) ;
                 // normalize price range
-                for (var i = stats.min; i < stats.max; i += Math.floor(stdDev / 50)) {
+                for (var i = Math.floor(stats.min); i <= stats.max; i += resolution) {
                     chartData[index] = new Array(6);
                     chartData[index][0] = i;
                     chartData[index][1] = priceHelpers.NormalDensityZx(i, stats.mean, stats.stdDev);
@@ -168,7 +170,7 @@ class ItemGraph extends Component {
                         colors: [
                             '#3366CC', 'B82E2E', 'green'
                         ],
-                        chartArea: {'width': '100%', 'height': '80%'}
+                        chartArea: {'width': '100%', 'height': '70%'}
                     },
                     rows: chartData,
 
@@ -387,31 +389,36 @@ class AuctionHistory extends Component {
     }
 
     render() {
+        var auction = null;
+        var d = null;
+        var rows = [<tr key="0">
+            <th>Player</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Time</th>
+        </tr>];
+        for (var i = 1; i <= this.props.auctions.length; i++) {
+            // format date
+            auction = this.props.auctions[i - 1]; // reserve 0 for <tr>
+            d = helpers.prettyDate(new Date(auction.Updated_at));
+
+            rows.push(<tr key={i} onMouseLeave={this.handleMouseLeave.bind(this)}
+                        onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
+                <td>{auction.Seller}</td>
+                <td>{auction.Price.toLocaleString()}pp</td>
+                <td>{auction.Quantity}</td>
+                <td><Link
+                    to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
+                </td>
+            </tr>);
+        }
+
         return (
             <div>
                 <h3>Auction History</h3>
                 <table id="price-info" className="table table-striped table-hover search">
                     <tbody>
-                    <tr>
-                        <th>Player</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Time</th>
-                    </tr>
-                    {this.props.auctions.map(function (auction) {
-                        // format date
-                        var d = helpers.prettyDate(new Date(auction.Updated_at));
-
-                        return <tr key={auction.Created_at} onMouseLeave={this.handleMouseLeave.bind(this)}
-                                   onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
-                            <td>{auction.Seller}</td>
-                            <td>{auction.Price.toLocaleString()}pp</td>
-                            <td>{auction.Quantity}</td>
-                            <td><Link
-                                to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
-                            </td>
-                        </tr>
-                    }.bind(this))}
+                    {rows}
                     </tbody>
                 </table>
             </div>
@@ -422,7 +429,7 @@ class AuctionHistory extends Component {
 /**
  * Item statistics that appear below item box
  */
-class ItemAuctionStats extends Component {
+class HistoryGraphFrame extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -465,7 +472,7 @@ class ItemAuctionStats extends Component {
                     </div>
                     <div className="col-md-5">
                         <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData}
-                                   auctions={this.props.auctions} item={this.props.item} price={this.state.hoverPrice}/>
+                        auctions={this.props.auctions} item={this.props.item} price={this.state.hoverPrice}/>
                     </div>
                 </div>
             )
@@ -511,7 +518,7 @@ class Item extends Component {
                     return seller.Seller == auction.Seller;
                 });
                 // if not, push it
-                if(!duplicate) {
+                if (!duplicate) {
                     daysSellers.push(auction);
                 }
             } else {
@@ -547,10 +554,7 @@ class Item extends Component {
             cache: false,
             type: "GET",
         }).then(function (payload) {
-            // TODO remove duplicates (name is the same within 24 hours) Do it for every day (instead of trying to check for auctions
-            //todo within 24 hours of each other.
-            //todo  during the loop, make a nested loop for each day and remove duplicate sellers
-            this.setState({auctions: this.sanitizeAuctions(payload.data.Auctions)});
+            this.setState({auctions: payload.data.Auctions});//this.sanitizeAuctions(payload.data.Auctions)});
         }.bind(this), function (err) {
             console.log("error: " + err);
         });
@@ -584,9 +588,9 @@ class Item extends Component {
                             </div>
                         </div>
                     </div>
-                    <ItemAuctionStats raw={this.props.params.auctions} auctions={this.state.auctions}
-                                      graphData={this.state.graphData}
-                                      item={this.state.item} setGraphData={this.setGraphData.bind(this)}/>
+                    <HistoryGraphFrame raw={this.props.params.auctions} auctions={this.state.auctions}
+                                       graphData={this.state.graphData}
+                                       item={this.state.item} setGraphData={this.setGraphData.bind(this)}/>
                 </div>
             );
     }
