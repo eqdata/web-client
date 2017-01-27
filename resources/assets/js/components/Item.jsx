@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {render} from 'react-dom';
 import {Chart} from 'react-google-charts';
 import {Link} from 'react-router';
-import ItemInfoBox from './itemInfoBox';
+import ItemInfoBox from './ItemInfoBox';
 
 import helpers from '../utils/helpers.js';
 import priceHelpers from '../utils/priceData';
@@ -211,7 +211,6 @@ class AuctionStats extends Component {
         };
 
         if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
-            console.log(this.props.auctions);
             seller = this.props.auctions[0].Seller;
             price = this.props.auctions[0].Price.toLocaleString() + "pp";
             d = (helpers.prettyDate(new Date(this.props.auctions[0].Updated_at)));
@@ -242,12 +241,10 @@ class AuctionHistory extends Component {
 
     handleMouseEnter(p) {
         this.props.graphFunc(p);
-        console.log("Need to plot " + p);
     }
 
     handleMouseLeave() {
         this.props.graphFunc(0);
-        console.log("Remove plot");
     }
 
     render() {

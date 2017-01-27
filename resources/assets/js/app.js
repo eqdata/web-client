@@ -8,10 +8,10 @@ import {render} from 'react-dom';
 import {Router, Route, browserHistory} from 'react-router';
 
 // Import custom components
-import AuctionFeed from './components/auctionFeed.jsx'
-import SearchResults from './components/searchResults.jsx'
-import Item from './components/item.jsx'
-import NotFound from './components/notFound.jsx'
+import AuctionFeed from './components/AuctionFeed.jsx'
+import SearchResults from './components/SearchResults.jsx'
+import Item from './components/Item.jsx'
+import NotFound from './components/NotFound.jsx'
 
 if (document.getElementById('content-container')) {
     render(

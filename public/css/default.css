@@ -290,18 +290,16 @@ footer {
     z-index: 1000;
 }
 
-.auction-buttons-container {
-    margin: 0 0 .5em .5em;
-    border: 0;
-    position: relative;
-    clear: right;
-    float: right;
-    width: 160px;
+.auction-container{
+    position : relative;
+    width : 100%;
 }
 
 .auction-buttons {
-    position: fixed;
-    width: 160px;
+    position: absolute;
+    right: 20px;
+    padding: 5px;
+    z-index:9901;
 }
 
 .fullscreen{
@@ -330,44 +328,6 @@ footer {
 .auction-message a{
     color: magenta;
 }
-
-a.tooltips {
-    position: relative;
-    display: inline;
-}
-a.tooltips span {
-    position: absolute;
-    min-width:140px;
-    width: 200px;
-    color: #030303;
-    background: #FF7E3D;
-    /*height: 30px;*/
-    /*line-height: 30px;*/
-    text-align: center;
-    visibility: hidden;
-    border-radius: 6px;
-}
-a.tooltips span:after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -8px;
-    width: 0; height: 0;
-    border-top: 8px solid #FF7E3D;
-    border-right: 8px solid transparent;
-    border-left: 8px solid transparent;
-}
-a:hover.tooltips span {
-    visibility: visible;
-    opacity: 0.8;
-    bottom: 30px;
-    left: 50%;
-    margin-left: -76px;
-    z-index: 999;
-}
-
-
 
 #toptip {
     z-index: 9901;

@@ -3,7 +3,7 @@ import {render} from 'react-dom';
 import ReactDOM from 'react-dom';
 import Toptip from '../utils/Toptip'
 import Helpers from '../utils/helpers'
-import ItemInfoBox from './itemInfoBox';
+import ItemInfoBox from './ItemInfoBox';
 import PriceHelpers from '../utils/priceData';
 import {Link} from 'react-router';
 
@@ -38,7 +38,7 @@ class TooltipLink extends Component {
                 type: "GET",
             }).then(function (payload) {
                 this.setState({auctions: payload.data.Auctions});//this.sanitizeAuctions(payload.data.Auctions)});
-                if(this.state.auctions) {
+                if (this.state.auctions) {
                     aucStats.week = PriceHelpers.timeMean(this.state.auctions, "week").toLocaleString() + "pp";
                     aucStats.month = PriceHelpers.timeMean(this.state.auctions, "month").toLocaleString() + "pp";
                     aucStats.allTime = PriceHelpers.timeMean(this.state.auctions, "all").toLocaleString() + "pp";
@@ -70,9 +70,10 @@ class TooltipLink extends Component {
 
         return (
             <Link to={"/item/" + this.props.name }
-               onMouseEnter={this.setTooltipContent.bind(this)}
-               onMouseOver={this.showTooltip.bind(this)}
-               onMouseLeave={this.hideTooltip.bind(this)}>
+                  onMouseEnter={this.setTooltipContent.bind(this)}
+                  onMouseOver={this.showTooltip.bind(this)}
+                  onMouseLeave={this.hideTooltip.bind(this)}
+                  onMouseUp={this.hideTooltip.bind(this)}>
                 { this.props.name }
             </Link>
         )

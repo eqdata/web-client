@@ -129,7 +129,7 @@ class ItemInfoBox extends Component {
                                                              src={"https://wiki.project1999.com/" + this.props.item.Image}
                                                              width="40" height="40"/></div>
                         </div>
-                        <p>
+                        <div>
                             {lines.affinity ? <span>{lines.affinity} <br /></span> : ""}
                             {lines.slot ? <span>{lines.slot} <br /></span> : ""}
                             {lines.ac ? <span>{lines.ac} <br /></span> : ""}
@@ -141,8 +141,8 @@ class ItemInfoBox extends Component {
                             {lines.metrics ? <span>{lines.metrics} <br /></span> : ""}
                             {lines.classes ? <span>{lines.classes} <br /></span> : ""}
                             {lines.races ? <span>{lines.races} <br /></span> : ""}
-                            {lines.aucStats ? <span>{lines.aucStats}</span> : ""}
-                        </p>
+                            {lines.aucStats ? lines.aucStats : ""}
+                        </div>
                     </div>
                 </div>
                 <div className="item-bot-bg"></div>
