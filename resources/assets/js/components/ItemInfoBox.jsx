@@ -57,6 +57,17 @@ function createEffect(effect) {
 class ItemInfoBox extends Component {
 
 
+    componentDidMount(){
+        var elem = ReactDOM.findDOMNode(this)
+        // Set the opacity of the element to 0
+        elem.style.opacity = 0;
+        window.requestAnimationFrame(function() {
+            // Now set a transition on the opacity
+            elem.style.transition = "opacity 550ms";
+            // and set the opacity to 1
+            elem.style.opacity = 1;
+        });
+    }
     render() {
         // parse info
         var item = this.props.item;

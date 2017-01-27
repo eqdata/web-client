@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import ReactDOM, {render} from 'react-dom';
 import {Chart} from 'react-google-charts';
 import {Link} from 'react-router';
 import ItemInfoBox from './ItemInfoBox';
@@ -76,7 +76,7 @@ class ItemGraph extends Component {
 
         var normalize = function (stats) {
             return new Promise(function (resolve, reject) {
-                var resolution = Math.ceil((stats.max - stats.min) / 100) ;
+                var resolution = Math.ceil((stats.max - stats.min) / 100);
                 // normalize price range
                 for (var i = Math.floor(stats.min); i <= stats.max; i += resolution) {
                     chartData[index] = new Array(6);
@@ -112,7 +112,6 @@ class ItemGraph extends Component {
             .then(function () {
                 this.props.setGraphData({
                     options: {
-                        title: 'Price Distribution',
                         hAxis: {
                             minorGridlines: {count: 6},
                             title: "Price (pp)"
@@ -124,7 +123,7 @@ class ItemGraph extends Component {
                         colors: [
                             '#3366CC', 'B82E2E', 'green'
                         ],
-                        chartArea: {'width': '100%', 'height': '70%'}
+                        chartArea: {'width': '100%', 'height': '70%', 'top': 0}
                     },
                     rows: chartData,
 
@@ -180,17 +179,20 @@ class ItemGraph extends Component {
                 this.props.graphData.rows.push([this.mean, null, null, null, priceY, " "]);
             }
             return (
-                <Chart
-                    chartType="AreaChart"
-                    data={this.props.graphData.data}
-                    options={this.props.graphData.options}
-                    rows={this.props.graphData.rows}
-                    columns={this.props.graphData.columns}
-                    graph_id="AreaChart"
-                    width="100%"
-                    height="400px"
-                    legend_toggle
-                />
+                <div>
+                    <h3>Price Distribution</h3>
+                    <Chart
+                        chartType="AreaChart"
+                        data={this.props.graphData.data}
+                        options={this.props.graphData.options}
+                        rows={this.props.graphData.rows}
+                        columns={this.props.graphData.columns}
+                        graph_id="AreaChart"
+                        width="100%"
+                        height="400px"
+                        legend_toggle
+                    />
+                </div>
             );
         } else {
             return (<h3>Not enough data to graph</h3>);
@@ -262,7 +264,7 @@ class AuctionHistory extends Component {
             d = helpers.prettyDate(new Date(auction.Updated_at));
 
             rows.push(<tr key={i} onMouseLeave={this.handleMouseLeave.bind(this)}
-                        onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
+                          onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                 <td><Link to={"/seller/SERVER/" + auction.Seller}>{auction.Seller}</Link></td>
                 <td>{auction.Price.toLocaleString()}pp</td>
                 <td>{auction.Quantity}</td>
@@ -331,7 +333,7 @@ class HistoryGraphFrame extends Component {
                     </div>
                     <div className="col-md-5">
                         <ItemGraph graphData={this.props.graphData} setGraphData={this.props.setGraphData}
-                        auctions={this.props.auctions} item={this.props.item} price={this.state.hoverPrice}/>
+                                   auctions={this.props.auctions} item={this.props.item} price={this.state.hoverPrice}/>
                     </div>
                 </div>
             )
@@ -353,6 +355,16 @@ class Item extends Component {
             graphData: {},
             average: 0
         };
+    }
+
+    componentDidMount() {
+        // fade in
+        var elem = ReactDOM.findDOMNode(this)
+        elem.style.opacity = 0;
+        window.requestAnimationFrame(function () {
+            elem.style.transition = "opacity 550ms";
+            elem.style.opacity = 1;
+        });
     }
 
     /**
@@ -391,6 +403,7 @@ class Item extends Component {
         });
         return sanitizedAuctions.concat(daysSellers);
     }
+
 
     componentWillMount() {
         // get state here from API with this.props.params

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import ReactDOM, {render} from 'react-dom';
 import {Link} from 'react-router';
 
 import helpers from '../utils/helpers.js';
@@ -12,6 +12,16 @@ class ResultItem extends Component {
             itemInfo: [],
             aucInfo: "none"
         };
+    }
+
+    componentDidMount(){
+        // fade in
+        var elem = ReactDOM.findDOMNode(this)
+        elem.style.opacity = 0;
+        window.requestAnimationFrame(function() {
+            elem.style.transition = "opacity 550ms";
+            elem.style.opacity = 1;
+        });
     }
 
     componentWillMount() {

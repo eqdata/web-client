@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import ReactDOM, {render} from 'react-dom';
 import client from 'socket.io-client';
 import {Link} from 'react-router';
 import TooltipLink from './TooltipLink';
@@ -52,6 +52,16 @@ class AuctionFeed extends React.Component {
 
     componentWillMount() {
         this.socketConnect();
+    }
+
+    componentDidMount(){
+        // fade in
+        var elem = ReactDOM.findDOMNode(this)
+        elem.style.opacity = 0;
+        window.requestAnimationFrame(function() {
+            elem.style.transition = "opacity 550ms";
+            elem.style.opacity = 1;
+        });
     }
 
 
