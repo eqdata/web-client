@@ -305,7 +305,7 @@ footer {
 }
 
 .fullscreen{
-    z-index: 9999;
+    z-index: 9900;
     width: 100%;
     height: 100%;
     position: fixed;
@@ -369,3 +369,9 @@ a:hover.tooltips span {
 
 
 
+#toptip {
+    z-index: 9901;
+    position: absolute;
+    display: none;
+    pointer-events: none!important;
+}

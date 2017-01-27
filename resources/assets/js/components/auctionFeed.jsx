@@ -4,11 +4,14 @@ import client from 'socket.io-client';
 import helpers from '../utils/helpers.js';
 import priceHelpers from '../utils/priceData';
 import {Link} from 'react-router';
+import TooltipLink from './TooltipLink';
+
 
 class AuctionFeed extends React.Component {
     switched = false;
-    loadingText = <span className="tooltip">loading</span>;
     shouldScroll = true;
+
+
 
     constructor(props) {
         super(props);
@@ -16,7 +19,6 @@ class AuctionFeed extends React.Component {
             messages: [],
             connected: false,
             gameServer: "Blue",
-            tooltip: this.loadingText
         };
     }
 
@@ -33,7 +35,6 @@ class AuctionFeed extends React.Component {
                 connected: true,
                 gameServer: this.state.gameServer,
                 switched: false,
-                tooltip: this.loadingText
             });
         }.bind(this));
 
@@ -41,7 +42,6 @@ class AuctionFeed extends React.Component {
             this.setState({
                 connected: this.state.connected,
                 gameServer: this.state.gameServer,
-                tooltip: this.state.tooltip,
                 messages: this.state.messages.concat(data)
             });
         }.bind(this));
@@ -83,28 +83,23 @@ class AuctionFeed extends React.Component {
         this.switched = true;
 
         if (this.state.gameServer == "Red")
-            this.setState({messages: [], connected: false, gameServer: "Blue", tooltip: this.loadingText});
+            this.setState({messages: [], connected: false, gameServer: "Blue"});
         else
-            this.setState({messages: [], connected: false, gameServer: "Red", tooltip: this.loadingText});
+            this.setState({messages: [], connected: false, gameServer: "Red"});
     }
 
     generateTestAuction(){
         this.setState({
             connected: this.state.connected,
             gameServer: this.state.gameServer,
-            tooltip: this.state.tooltip,
             messages: this.state.messages.concat(this.convertLinks('Test auction: WTS <a href="/item/Crushed_Jaundice_Gem">Crushed Jaundice Gem</a> 50pp'))
+                .concat(<span>here's a Router Link: <TooltipLink name="Crushed Jaundice Gem"/></span>)
         });
     }
 
     // TODO implement link converter
     convertLinks(message){
-        // for each link:
-        // create <Link/> tag
-        // add className="tooltips"
-        // add onMouseEnter={this.setTooltip.bind(this, "URI-ENCODED NAME HERE")}
-        // add onMouseLeave={this.resetTooltip.bind(this)}
-        // include {this.state.tooltip} before </Link>
+
         return message;
     }
 
@@ -112,52 +107,6 @@ class AuctionFeed extends React.Component {
         document.getElementById("auction-box").classList.toggle('fullscreen');
         document.getElementById("fullscreen-icon").classList.toggle('glyphicon-unchecked');
         document.getElementById("fullscreen-icon").classList.toggle('glyphicon-fullscreen');
-    }
-
-    setTooltip(item) {
-        helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + item,
-            contentType: "application/json",
-            cache: false,
-            type: "GET",
-        }).then(function (payload) {
-            var average = {
-                week: "n/a",
-                month: "n/a",
-                all: "n/a"
-            };
-            if (payload.data.Auctions[0]) {
-                average.week = priceHelpers.timeMean(payload.data.Auctions, "week").toLocaleString() + "pp";
-                average.month = priceHelpers.timeMean(payload.data.Auctions, "month").toLocaleString() + "pp";
-                average.all = priceHelpers.timeMean(payload.data.Auctions, "all").toLocaleString() + "pp";
-            }
-            this.setState({
-                messages: this.state.messages,
-                connected: this.state.connected,
-                gameServer: this.state.gameServer,
-                tooltip: <span className="tooltip">Average (week): {average.week}<br />
-                    Average (month): {average.month}<br />
-                    Average (all time): {average.all}</span>
-            });
-        }.bind(this), function (err) {
-            console.log("error: " + err);
-            this.setState({
-                messages: this.state.messages,
-                connected: this.state.connected,
-                gameServer: this.state.gameServer,
-                tooltip: <span className="tooltip">error</span>
-            });
-        });
-
-    }
-
-    resetTooltip() {
-        this.setState({
-            messages: this.state.messages,
-            connected: this.state.connected,
-            gameServer: this.state.gameServer,
-            tooltip: this.loadingText
-        });
     }
 
     render() {
@@ -188,14 +137,8 @@ class AuctionFeed extends React.Component {
                     </div>
                     <div className="auction-loading">LOADING, PLEASE WAIT...</div>
 
-                    <div className="auction-message">This is a test auction. This page should only auto scroll when the user
-                        has already scrolled to the bottom of the screen (or hasn't scrolled at all) <Link to="/test" className="tooltips"
-                                                                                   onMouseEnter={this.setTooltip.bind(this, "crushed%20jaundice%20gem")}
-                                                                                   onMouseLeave={this.resetTooltip.bind(this)}
-                                                                                   >
-                        test
-                        {this.state.tooltip}
-                    </Link> blah blah blah
+                    <div className="auction-message">This is a test auction. <TooltipLink name="Crushed Jaundice Gem"/> This page should only auto scroll when the user
+                        has already scrolled to the bottom of the screen (or hasn't scrolled at all)
                     </div>
 
                     { this.state.connected ?
