@@ -7,6 +7,9 @@ import ItemInfoBox from './ItemInfoBox';
 import helpers from '../utils/helpers.js';
 import priceHelpers from '../utils/priceData';
 
+/**
+ * Raw auction text as recorded from /auc
+ */
 class RawAuctions extends Component {
     render() {
         return (
@@ -16,6 +19,9 @@ class RawAuctions extends Component {
     };
 }
 
+/**
+ * Price districution graph
+ */
 class ItemGraph extends Component {
     maxY = 0;
     mean = 0;
@@ -200,6 +206,9 @@ class ItemGraph extends Component {
     }
 }
 
+/**
+ * Text box with simple auction stats
+ */
 class AuctionStats extends Component {
 
     render() {
@@ -237,7 +246,7 @@ class AuctionStats extends Component {
 }
 
 /**
- * Auction data information
+ * Auction history based on sellers
  */
 class AuctionHistory extends Component {
 
@@ -263,6 +272,7 @@ class AuctionHistory extends Component {
             auction = this.props.auctions[i - 1]; // reserve 0 for <tr>
             d = helpers.prettyDate(new Date(auction.Updated_at));
 
+            // TODO add seller page
             rows.push(<tr key={i} onMouseLeave={this.handleMouseLeave.bind(this)}
                           onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                 <td><Link to={"/seller/SERVER/" + auction.Seller}>{auction.Seller}</Link></td>
@@ -277,7 +287,7 @@ class AuctionHistory extends Component {
         return (
             <div>
                 <h3>Auction History</h3>
-                <table id="price-info" className="table table-striped table-hover search">
+                <table id="price-info" className="table table-striped table-hover">
                     <tbody>
                     {rows}
                     </tbody>

@@ -100,7 +100,10 @@ class AuctionFeed extends React.Component {
             connected: this.state.connected,
             gameServer: this.state.gameServer,
             messages: this.state.messages.concat(this.convertLinks('Test auction: WTS <a href="/item/Crushed_Jaundice_Gem">Crushed Jaundice Gem</a> 50pp'))
-                .concat(<span>here's a Router Link: <TooltipLink name="Crushed Jaundice Gem"/></span>)
+                .concat(<span>here's a Router Link: <TooltipLink name="Crushed Jaundice Gem"/> blah blah blah blah <TooltipLink name="Shield of Prexus"/></span>)
+                .concat(<span>here's a Router Link: <TooltipLink name="Crushed Jaundice Gem"/>
+                    blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah <TooltipLink name="Shield of Prexus"/></span>)
+                .concat(<span>here's a Router Link: <TooltipLink name="Shield of Prexus"/></span>)
         });
     }
 

@@ -84,9 +84,12 @@ class SearchResults extends Component {
     }
 
     componentWillMount() {
+        // TODO store server in localstorage (or account)
+        var server = localStorage.getItem('server') || "blue";
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/search/" + this.props.params.terms,
+            url: "http://52.205.204.206:8085/items/search/" + this.props.params.terms +
+                "?server=" + server,
             contentType: "application/json",
             cache: false,
             type: "GET",
