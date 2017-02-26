@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import {render} from 'react-dom';
 import {Chart} from 'react-google-charts';
 import {Link} from 'react-router';
@@ -55,8 +56,7 @@ function createEffect(effect) {
  * Item information.
  */
 class ItemInfoBox extends Component {
-
-
+    
     componentDidMount(){
         var elem = ReactDOM.findDOMNode(this)
         // Set the opacity of the element to 0
@@ -70,7 +70,6 @@ class ItemInfoBox extends Component {
     }
     renderImage() {
         if(this.props.item.Image !== null) {
-            console.log(this.props.Image)
             return ( <img alt={this.props.item.Image.replace("/images/", "")}
                         src={"https://wiki.project1999.com/" + this.props.item.Image}
                         width="40" height="40"/> )
@@ -79,7 +78,6 @@ class ItemInfoBox extends Component {
         return (<i className="fa fa-spinner fa-spin" />)
     }
     render() {
-        console.log(this.props.item)
         // parse info
         var item = this.props.item;
         var affinities = item.Affinities ? item.Affinities.join(" ") : "";

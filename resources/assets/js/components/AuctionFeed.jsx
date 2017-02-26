@@ -2,80 +2,13 @@ import React, {Component} from 'react';
 import ReactDOM, {render} from 'react-dom';
 import client from 'socket.io-client';
 import {Link} from 'react-router';
-import TooltipLink from './TooltipLink';
-import Helpers from '../utils/helpers'
-
-class AuctionLine extends React.Component {
-    shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.message.line !== this.props.message.line
-    }
-    injectLinks(o) {
-        //return <span>{o.line}</span>
-
-        var elems = []
-        var itemMap = []
-
-        // Build up a map of the correct items
-        o.items.forEach(function(item, i) {
-            let indexOfItemInLine = o.line.toLowerCase().indexOf(item.name.toLowerCase())
-            if(indexOfItemInLine === -1) {
-                item.name = item.name.toLowerCase()
-                    .replace("spell: ", "")
-                    .replace("rune of the ", "")
-                    .replace("words of the ", "")
-                    .replace("words of ", "")
-                    .replace("rune of ", "")
-                indexOfItemInLine = o.line.toLowerCase().indexOf(item.name.toLowerCase())
-            }
-
-            if(indexOfItemInLine > -1) {
-                itemMap.push(item.name)
-            }
-        })
-
-        var parts = o.line.split(" ")
-        var found = false
-        var itemString = ""
-        var ignoredIndexes = []
-
-        parts.forEach(function(part, i) {
-            if(part !== " " && ignoredIndexes.indexOf(i) === -1) {
-                itemMap.some(function(match, j) {
-                    if(match.trim().indexOf(part.trim()) > -1) {
-                        itemString = match
-                        itemMap.splice(j, 1)
-                        found = true
-
-                        // Remove remaining elements from our parts array
-                        match.trim().split(" ").forEach(function(p, idx) {
-                            ignoredIndexes.push((i + idx))
-                        })
-                    } else {
-                        found = false
-                        itemString = ""
-                    }
-                    return found
-                })
-
-                if(itemString !== "" && found) {
-                    found = false
-                    elems.push(<TooltipLink key={itemString+":"+i} name={itemString.trim() + " "}/>)
-                } else {
-                    elems.push(<span key={part+":"+i}>{part + " "}</span>)
-                }
-            }
-        })
-
-        return elems
-    }
-    render() {
-        return <div className="auction-message"><p>{ this.injectLinks(this.props.message) }</p></div>
-    }
-}
+import AuctionLine from './AuctionLine'
 
 class AuctionFeed extends React.Component {
     switched = false;
     shouldScroll = true;
+    disconnected = false;
+    _isMounted = false;
 
 
     constructor(props) {
@@ -113,8 +46,10 @@ class AuctionFeed extends React.Component {
 
         this.socket.on('disconnect', function () {
             setTimeout(function () {
-                this.socket.connect()
-            }, 2500)
+                if(!this.disconnected) {
+                    this.socket.connect()
+                }
+            }.bind(this), 2500)
         });
     }
 
@@ -122,8 +57,16 @@ class AuctionFeed extends React.Component {
         this.socketConnect();
     }
 
+    componentWillUnmount() {
+        this._isMounted = false
+        console.log("disconnected socket")
+        this.disconnected = true
+        this.socket.disconnect();
+    }
+
     componentDidMount(){
         // fade in
+        this._isMounted = true
         var elem = ReactDOM.findDOMNode(this)
         elem.style.opacity = 0;
         window.requestAnimationFrame(function() {
@@ -132,6 +75,12 @@ class AuctionFeed extends React.Component {
         });
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if(!this._isMounted) return false
+
+        if(nextProps !== this.props) return true
+        if(nextState !== this.state) return true
+    }
 
     componentWillUpdate() {
         if (this.switched) {
@@ -151,7 +100,6 @@ class AuctionFeed extends React.Component {
             var objDiv = document.getElementById("auction-box");
             objDiv.scrollTop = objDiv.scrollHeight;
         }
-
     }
 
     switchServer() {
