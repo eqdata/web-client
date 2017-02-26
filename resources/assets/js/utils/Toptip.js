@@ -41,7 +41,7 @@ var Toptip = function() {
      * Checks the current bounds of the tooltip and returns the
      * new left/right to keep the tip within bounds
      * @param event : Event set by caller
-     * @return Array : coords array contains new x and y position for the tooltip
+     * @return Object : coords array contains new x and y position for the tooltip
      */
     this.checkBounds = function(event) {
         var tooltipRect = this.tooltip.getBoundingClientRect();

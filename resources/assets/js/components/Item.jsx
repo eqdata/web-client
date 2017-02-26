@@ -41,7 +41,7 @@ class ItemGraph extends Component {
             return new Promise(function (resolve, reject) {
                 if (this.props.auctions.length > 0) {
                     this.props.auctions.forEach(function (auc) {
-                        var priceDate = new Date(auc.Updated_at);
+                        var priceDate = new Date(auc.Auctioned_At);
                         // only include auctions in last 30 days
                         if (auc.Price > 0 && Math.ceil((now - priceDate) / 1000 / 60 / 60 / 24) < 30)
                             prices.push(auc.Price);
@@ -224,7 +224,7 @@ class AuctionStats extends Component {
         if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
             seller = this.props.auctions[0].Seller;
             price = this.props.auctions[0].Price.toLocaleString() + "pp";
-            d = (helpers.prettyDate(new Date(this.props.auctions[0].Updated_at)));
+            d = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
             average.week = priceHelpers.timeMean(this.props.auctions, "week").toLocaleString() + "pp";
             average.month = priceHelpers.timeMean(this.props.auctions, "month").toLocaleString() + "pp";
             average.all = priceHelpers.timeMean(this.props.auctions, "all").toLocaleString() + "pp";
@@ -270,7 +270,7 @@ class AuctionHistory extends Component {
         for (var i = 1; i <= this.props.auctions.length; i++) {
             // format date
             auction = this.props.auctions[i - 1]; // reserve 0 for <tr>
-            d = helpers.prettyDate(new Date(auction.Updated_at));
+            d = helpers.prettyDate(new Date(auction.Auctioned_At));
 
             // TODO add seller page
             rows.push(<tr key={i} onMouseLeave={this.handleMouseLeave.bind(this)}
@@ -390,7 +390,7 @@ class Item extends Component {
         var daysSellers = [];
         var sanitizedAuctions = [];
         auctions.forEach(function (auction) {
-            date = new Date(auction.Updated_at);
+            date = new Date(auction.Auctioned_At);
             var duplicate = false;
             // if current day
             if (date.getDay() == currentDay && date.getYear() == currentYear && date.getMonth() == currentMonth) {
@@ -418,7 +418,7 @@ class Item extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/" + this.props.params.item,
+            url: "http://52.205.204.206:8085/items/" + this.props.params.item + "?server=" + (this.props.server || "blue"),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -431,7 +431,7 @@ class Item extends Component {
         // TODO paginate
         // ?skip=0&take=10&ascending=1
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item,
+            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item + "?server=" + (this.props.server || "blue"),
             contentType: "application/json",
             cache: false,
             type: "GET",

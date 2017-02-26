@@ -68,7 +68,18 @@ class ItemInfoBox extends Component {
             elem.style.opacity = 1;
         });
     }
+    renderImage() {
+        if(this.props.item.Image !== null) {
+            console.log(this.props.Image)
+            return ( <img alt={this.props.item.Image.replace("/images/", "")}
+                        src={"https://wiki.project1999.com/" + this.props.item.Image}
+                        width="40" height="40"/> )
+        }
+
+        return (<i className="fa fa-spinner fa-spin" />)
+    }
     render() {
+        console.log(this.props.item)
         // parse info
         var item = this.props.item;
         var affinities = item.Affinities ? item.Affinities.join(" ") : "";
@@ -107,6 +118,7 @@ class ItemInfoBox extends Component {
 
         // create lines
         var lines = {
+            loading: this.props.item.Loading ? true : false,
             affinity: affinities,
             slot: withLabel("Slot", slots),
             skill: withLabel("Skill", skill) + " " + withLabel("Atk Delay", delay),
@@ -136,11 +148,12 @@ class ItemInfoBox extends Component {
                 <div className="item-bg">
                     <div className="item-data">
                         <div className="item-icon">
-                            <div className="floatright"><img alt={this.props.item.Image.replace("/images/", "")}
-                                                             src={"https://wiki.project1999.com/" + this.props.item.Image}
-                                                             width="40" height="40"/></div>
+                            <div className="floatright">
+                                { this.renderImage() }
+                            </div>
                         </div>
                         <div>
+                            {lines.loading ? <span>Fetching item data...</span> : ""}
                             {lines.affinity ? <span>{lines.affinity} <br /></span> : ""}
                             {lines.slot ? <span>{lines.slot} <br /></span> : ""}
                             {lines.ac ? <span>{lines.ac} <br /></span> : ""}

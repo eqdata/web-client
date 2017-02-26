@@ -185,7 +185,8 @@ module.exports = {
         }
         interval = Math.floor(seconds / 2592000);
         if (interval > 1) {
-            return this.dateString(date, false)
+            //return this.dateString(date, false)
+            return interval + " months ago"
         }
         interval = Math.floor(seconds / 86400); // seconds in a day
         if (interval > 1) {
@@ -200,5 +201,17 @@ module.exports = {
             return interval + " minutes ago";
         }
         return Math.floor(seconds) + " seconds ago";
+    },
+    titleCase: function(str) {
+        return str.split(' ').map(function(word) {
+            if(word.trim() === "") {
+                return " "
+            } else {
+                if(word[0] === "(" && word.length > 2) {
+                    return word[0] + word[1].toUpperCase() + word.substr(2).toLowerCase()
+                }
+                return word[0].toUpperCase() + word.substr(1).toLowerCase()
+            }
+        }).join(' ')
     }
 };

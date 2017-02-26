@@ -3,7 +3,75 @@ import ReactDOM, {render} from 'react-dom';
 import client from 'socket.io-client';
 import {Link} from 'react-router';
 import TooltipLink from './TooltipLink';
+import Helpers from '../utils/helpers'
 
+class AuctionLine extends React.Component {
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextProps.message.line !== this.props.message.line
+    }
+    injectLinks(o) {
+        //return <span>{o.line}</span>
+
+        var elems = []
+        var itemMap = []
+
+        // Build up a map of the correct items
+        o.items.forEach(function(item, i) {
+            let indexOfItemInLine = o.line.toLowerCase().indexOf(item.name.toLowerCase())
+            if(indexOfItemInLine === -1) {
+                item.name = item.name.toLowerCase()
+                    .replace("spell: ", "")
+                    .replace("rune of the ", "")
+                    .replace("words of the ", "")
+                    .replace("words of ", "")
+                    .replace("rune of ", "")
+                indexOfItemInLine = o.line.toLowerCase().indexOf(item.name.toLowerCase())
+            }
+
+            if(indexOfItemInLine > -1) {
+                itemMap.push(item.name)
+            }
+        })
+
+        var parts = o.line.split(" ")
+        var found = false
+        var itemString = ""
+        var ignoredIndexes = []
+
+        parts.forEach(function(part, i) {
+            if(part !== " " && ignoredIndexes.indexOf(i) === -1) {
+                itemMap.some(function(match, j) {
+                    if(match.trim().indexOf(part.trim()) > -1) {
+                        itemString = match
+                        itemMap.splice(j, 1)
+                        found = true
+
+                        // Remove remaining elements from our parts array
+                        match.trim().split(" ").forEach(function(p, idx) {
+                            ignoredIndexes.push((i + idx))
+                        })
+                    } else {
+                        found = false
+                        itemString = ""
+                    }
+                    return found
+                })
+
+                if(itemString !== "" && found) {
+                    found = false
+                    elems.push(<TooltipLink key={itemString+":"+i} name={itemString.trim() + " "}/>)
+                } else {
+                    elems.push(<span key={part+":"+i}>{part + " "}</span>)
+                }
+            }
+        })
+
+        return elems
+    }
+    render() {
+        return <div className="auction-message"><p>{ this.injectLinks(this.props.message) }</p></div>
+    }
+}
 
 class AuctionFeed extends React.Component {
     switched = false;
@@ -95,24 +163,6 @@ class AuctionFeed extends React.Component {
             this.setState({messages: [], connected: false, gameServer: "Red"});
     }
 
-    generateTestAuction() {
-        this.setState({
-            connected: this.state.connected,
-            gameServer: this.state.gameServer,
-            messages: this.state.messages.concat(this.convertLinks('Test auction: WTS <a href="/item/Crushed_Jaundice_Gem">Crushed Jaundice Gem</a> 50pp'))
-                .concat(<span>here's a Router Link: <TooltipLink name="Crushed Jaundice Gem"/> blah blah blah blah <TooltipLink name="Shield of Prexus"/></span>)
-                .concat(<span>here's a Router Link: <TooltipLink name="Crushed Jaundice Gem"/>
-                    blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah <TooltipLink name="Shield of Prexus"/></span>)
-                .concat(<span>here's a Router Link: <TooltipLink name="Shield of Prexus"/></span>)
-        });
-    }
-
-    // TODO implement link converter
-    convertLinks(message) {
-
-        return message;
-    }
-
     fullscreenToggle() {
         document.getElementById("auction-container").classList.toggle('fullscreen');
         document.getElementById("auction-box").classList.toggle('fullscreen');
@@ -126,11 +176,6 @@ class AuctionFeed extends React.Component {
                 <h1 id="page-title" className="page-header">
                     Live Auction Feed - {this.state.gameServer} Server
                 </h1>
-
-                <button onClick={this.generateTestAuction.bind(this)}
-                        className={"btn btn-xs btn-success"}>
-                    GENERATE TEST DATA
-                </button>
 
                 <div className="auction-container" id="auction-container">
                     <div className="auction-buttons">
@@ -146,17 +191,16 @@ class AuctionFeed extends React.Component {
                     <div className="auction-box" id="auction-box">
 
                         <div className="auction-loading">LOADING, PLEASE WAIT...</div>
+                        {
+                            this.state.connected ?
+                            <div className="auction-connected">You have entered East Commonlands.</div> : <div></div>
+                        }
 
-                        <div className="auction-message">This is a test auction. <TooltipLink
-                            name="Crushed Jaundice Gem"/>
-                            This page should only auto scroll when the user
-                            has already scrolled to the bottom of the screen (or hasn't scrolled at all)
-                        </div>
-
-                        { this.state.connected ?
-                            <div className="auction-connected">You have entered East Commonlands.</div> : <div></div>}
-                        { this.state.messages.map((msg, idx) => <div key={'msg-' + idx }
-                                                                     className="auction-message">{ msg }</div>)}
+                        {
+                            this.state.messages.map(function(msg, idx) {
+                                return <AuctionLine message={msg} key={"message"+idx} />
+                            })
+                        }
 
                     </div>
                 </div>
@@ -164,5 +208,7 @@ class AuctionFeed extends React.Component {
         );
     }
 }
+
+
 
 export default AuctionFeed

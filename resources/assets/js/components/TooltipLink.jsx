@@ -24,15 +24,30 @@ class TooltipLink extends Component {
             allTime: "n/a"
         };
 
+        var toptip = document.getElementById("toptip");
+        var placeholder = {
+            Name: this.props.name,
+            AveragePrice: 0,
+            Image: null,
+            Statistics: [],
+            Effect: { URI: "", Name: "", Restriction: "" },
+            Affinities: [],
+            Races: [],
+            Classes: [],
+            Slots: [],
+            Loading: true
+        }
+        ReactDOM.render(<ItemInfoBox item={placeholder} />, toptip);
+
         Helpers.ajax({
-            url: "http://52.205.204.206:8085/items/" + this.props.name,
+            url: "http://52.205.204.206:8085/items/" + this.props.name.trim(),
             contentType: "application/json",
             cache: false,
             type: "GET",
         }).then(function (payload) {
             this.setState({item: payload.data});
             Helpers.ajax({
-                url: "http://52.205.204.206:8085/items/auctions/" + this.props.name,
+                url: "http://52.205.204.206:8085/items/auctions/" + this.props.name.trim() + "?server=" + (this.props.server || "blue"),
                 contentType: "application/json",
                 cache: false,
                 type: "GET",
@@ -43,11 +58,9 @@ class TooltipLink extends Component {
                     aucStats.month = PriceHelpers.timeMean(this.state.auctions, "month").toLocaleString() + "pp";
                     aucStats.allTime = PriceHelpers.timeMean(this.state.auctions, "all").toLocaleString() + "pp";
                 }
-                var content = (
-                    <ItemInfoBox item={this.state.item} aucStats={aucStats}/>
-                );
+
                 var toptip = document.getElementById("toptip");
-                ReactDOM.render(content, toptip);
+                ReactDOM.render(<ItemInfoBox item={this.state.item} aucStats={aucStats}/>, toptip);
             }.bind(this));
         }.bind(this));
 
@@ -69,7 +82,7 @@ class TooltipLink extends Component {
     render() {
 
         return (
-            <Link to={"/item/" + this.props.name }
+            <Link to={"/item/" + this.props.name.trim() }
                   onMouseEnter={this.setTooltipContent.bind(this)}
                   onMouseOver={this.showTooltip.bind(this)}
                   onMouseLeave={this.hideTooltip.bind(this)}
