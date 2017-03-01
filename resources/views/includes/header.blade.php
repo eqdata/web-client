@@ -2,6 +2,7 @@
 @if(isset($index) && $index)
     <div class="container">
         <ul class="index-menu">
+            <li><a href="#" id="server-toggle">Switch to <span id="server-name">Red</span> Server</a></li>
             <li><a href="/feed">Live Feed</a></li>
             <li><a href="#logout" data-prevent="">Login</a></li>
         </ul>
@@ -21,6 +22,7 @@
             <div class="navbar-collapse collapse" id="nav-searchbar">
 
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" id="server-toggle">Switch to <span id="server-name">Red</span> Server</a></li>
                     <li><a href="/feed">Live Feed</a></li>
                     <li><a href="#logout" data-prevent="">Login</a></li>
                 </ul>

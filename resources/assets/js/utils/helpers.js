@@ -213,5 +213,13 @@ module.exports = {
                 return word[0].toUpperCase() + word.substr(1).toLowerCase()
             }
         }).join(' ')
+    },
+    getServer: function(){
+        return localStorage.getItem('server') || "blue";
+    },
+    toggleServer: function(){
+        var newServer = this.getServer() == "blue" ? "red" : "blue";
+        localStorage.setItem('server', newServer);
+        return newServer;
     }
 };

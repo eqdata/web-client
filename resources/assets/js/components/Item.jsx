@@ -316,7 +316,7 @@ class HistoryGraphFrame extends Component {
 
     render() {
         // no auctions
-        if (this.props.auctions.length == 0) {
+        if (!this.props.auctions || this.props.auctions.length == 0) {
             // console.log("NO AUCTIONS FOUND");
             return (<div>
                 <h2 id="page-title" className="page-header">
@@ -418,7 +418,7 @@ class Item extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/" + this.props.params.item + "?server=" + (this.props.server || "blue"),
+            url: "http://52.205.204.206:8085/items/" + this.props.params.item + "?server=" + helpers.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -431,7 +431,7 @@ class Item extends Component {
         // TODO paginate
         // ?skip=0&take=10&ascending=1
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item + "?server=" + (this.props.server || "blue"),
+            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item + "?server=" + helpers.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
