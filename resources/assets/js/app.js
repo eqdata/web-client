@@ -1,7 +1,6 @@
 require('./bootstrap');
 require('./utils/helpers');
-require('./utils/serverSelect');
-require('./utils/search');
+require('./includes/onLoad');
 
 import React, {Component} from 'react';
 import {render} from 'react-dom';
