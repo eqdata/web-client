@@ -173,7 +173,7 @@ module.exports = {
         return monthNames[monthIndex] + " " + day + (showYear ? (", " + year) : "");
     },
     prettyDate: function (date) {
-        if(!(date instanceof Date))
+        if (!(date instanceof Date))
             return "";
 
         var seconds = Math.floor((new Date() - date) / 1000);
@@ -202,24 +202,16 @@ module.exports = {
         }
         return Math.floor(seconds) + " seconds ago";
     },
-    titleCase: function(str) {
-        return str.split(' ').map(function(word) {
-            if(word.trim() === "") {
+    titleCase: function (str) {
+        return str.split(' ').map(function (word) {
+            if (word.trim() === "") {
                 return " "
             } else {
-                if(word[0] === "(" && word.length > 2) {
+                if (word[0] === "(" && word.length > 2) {
                     return word[0] + word[1].toUpperCase() + word.substr(2).toLowerCase()
                 }
                 return word[0].toUpperCase() + word.substr(1).toLowerCase()
             }
         }).join(' ')
-    },
-    getServer: function(){
-        return localStorage.getItem('server') || "blue";
-    },
-    toggleServer: function(){
-        var newServer = this.getServer() == "blue" ? "red" : "blue";
-        localStorage.setItem('server', newServer);
-        return newServer;
     }
 };

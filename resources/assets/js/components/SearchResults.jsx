@@ -3,6 +3,7 @@ import ReactDOM, {render} from 'react-dom';
 import {Link} from 'react-router';
 
 import helpers from '../utils/helpers.js';
+import serverSelect from "../utils/serverSelect";
 
 class ResultItem extends Component {
 
@@ -27,7 +28,7 @@ class ResultItem extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/" + this.props.item + "?server=" + helpers.getServer(),
+            url: "http://52.205.204.206:8085/items/" + this.props.item + "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -39,7 +40,7 @@ class ResultItem extends Component {
 
         helpers.ajax({
             url: "http://52.205.204.206:8085/items/auctions/" + this.props.item + "?take=1" +
-            "?server=" + helpers.getServer(),
+            "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -87,12 +88,10 @@ class SearchResults extends Component {
     }
 
     componentWillMount() {
-        // TODO store server in localstorage (or account)
-        var server = localStorage.getItem('server') || "blue";
         // get state here from API with this.props.params
         helpers.ajax({
             url: "http://52.205.204.206:8085/items/search/" + this.props.params.terms +
-            "?server=" + helpers.getServer(),
+            "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -117,9 +116,9 @@ class SearchResults extends Component {
             );
         return (
             <div>
-                <h1 id="page-title" className="page-header">
-                    Search Results
-                    <small id="query-string"> {this.props.params.terms}</small>
+                <h1 id="query-string" className="page-header">
+                    Search: {this.props.params.terms} &nbsp;
+                    <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server </small>
                 </h1>
                 {rows}
             </div>
