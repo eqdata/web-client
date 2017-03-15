@@ -267,7 +267,7 @@ class PagerPrevious extends Component {
     }
 
     render() {
-        return <li className="previous"><a className="pointer" onMouseUp={this.handleMouseUp.bind(this)}>Prev &larr;</a>
+        return <li className="previous"><a className="pointer" onMouseUp={this.handleMouseUp.bind(this)}>&larr; Prev</a>
         </li>;
     }
 }
