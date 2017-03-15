@@ -190,13 +190,13 @@ footer {
 .item-top-bg {
     width: 451px;
     height: 18px;
-    background-image: url(/images/Itemtop.gif);
+    background-image: url(/images/ttTop.png);
 }
 
 .item-bot-bg {
     width: 451px;
     height: 10px;
-    background-image: url(/images/Itembot.gif);
+    background-image: url(/images/ttBottom.png);
 }
 
 .item-data {
@@ -214,8 +214,9 @@ footer {
 }
 
 .item-bg {
-    width: 451px;
-    background-image: url(/images/Itemshot.gif);
+    margin-left: 1px;
+    width: 449px;
+    background-image: url(/images/ttBack.png);
     text-align: left;
 }
 
@@ -243,7 +244,7 @@ footer {
     width: 50px;
     height: 50px;
     border-style: solid;
-    background-color: #101010;
+    background-color: #262626;
     position: relative;
     border-radius: 5px;
     border-color: #404040;

@@ -211,24 +211,9 @@ class ItemGraph extends Component {
  * Text box with simple auction stats
  */
 class AuctionStats extends Component {
-    last = null;
-
-    componentWillMount() {
-        // static data
-        var d = "never";
-        var seller = "n/a";
-        var price = "n/a";
-        if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
-            seller = this.props.auctions[0].Seller;
-            price = this.props.auctions[0].Price.toLocaleString() + "pp";
-            d = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
-        }
-        this.last = <span>
-                Last Seen: <span className="textright">{d}</span><br/>
-                Last Seller: <span className="textright">{seller}</span><br />
-                Last Price: <span className="textright">{price}</span><br />
-             </span>
-    }
+    lastSeen = "never";
+    lastSeller = "none";
+    lastPrice = "none";
 
     render() {
         var average = {
@@ -238,6 +223,11 @@ class AuctionStats extends Component {
         };
 
         if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
+            if (this.lastSeller == "none") {
+                this.lastSeller = this.props.auctions[0].Seller;
+                this.lastPrice = this.props.auctions[0].Price > 0 ? this.props.auctions[0].Price.toLocaleString() + "pp" : "none";
+                this.lastSeen = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
+            }
             average.week = priceHelpers.timeMean(this.props.auctions, "week").toLocaleString() + "pp";
             average.month = priceHelpers.timeMean(this.props.auctions, "month").toLocaleString() + "pp";
             average.all = priceHelpers.timeMean(this.props.auctions, "all").toLocaleString() + "pp";
@@ -246,7 +236,9 @@ class AuctionStats extends Component {
             <div className="well search">
                 <h4>Auction Statistics</h4>
                 <p>
-                    {this.last}
+                    Last Seen: <span className="textright">{this.lastSeen}</span><br/>
+                    Last Seller: <span className="textright">{this.lastSeller}</span><br />
+                    Last Price: <span className="textright">{this.lastPrice}</span><br />
                     Average (week): <span className="textright">{average.week}</span><br />
                     Average (month): <span className="textright">{average.month}</span><br />
                     Average (all time): <span className="textright">{average.all}</span><br />

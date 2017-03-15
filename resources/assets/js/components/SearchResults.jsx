@@ -56,7 +56,7 @@ class ResultItem extends Component {
         var seller = "n/a";
         var price = "";
         if (this.state.aucInfo != "none") {
-            d = (helpers.prettyDate(new Date(this.state.aucInfo[0].Updated_at)));
+            d = (helpers.prettyDate(new Date(this.state.aucInfo[0].Auctioned_At)));
             seller = this.state.aucInfo[0].Seller;
             price = "(" + this.state.aucInfo[0].Price.toLocaleString() + "pp)";
         }
