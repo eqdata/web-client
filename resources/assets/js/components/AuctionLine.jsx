@@ -64,7 +64,7 @@ class AuctionLine extends React.Component {
         return elems
     }
     render() {
-        return <div className="auction-message"><p>{ this.injectLinks(this.props.message) }</p></div>
+        return <div className="auction-message"><span>{ this.injectLinks(this.props.message) }</span></div>
     }
 }
 
