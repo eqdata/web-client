@@ -40,7 +40,7 @@ class ResultItem extends Component {
 
         helpers.ajax({
             url: "http://52.205.204.206:8085/items/auctions/" + this.props.item + "?take=1" +
-            "?server=" + serverSelect.getServer(),
+            "&server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",

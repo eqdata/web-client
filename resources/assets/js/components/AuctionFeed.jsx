@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import ReactDOM, {render} from 'react-dom';
 import client from 'socket.io-client';
 import {Link} from 'react-router';
-import AuctionLine from './AuctionLine'
+import AuctionLine from './AuctionLine';
+import serverSelect from "../utils/serverSelect";
+import helpers from '../utils/helpers.js';
 
 class AuctionFeed extends React.Component {
     switched = false;
@@ -16,7 +18,6 @@ class AuctionFeed extends React.Component {
         this.state = {
             messages: [],
             connected: false,
-            gameServer: "Blue",
         };
     }
 
@@ -24,14 +25,13 @@ class AuctionFeed extends React.Component {
         this.socket = client.connect('http://52.205.204.206:3000');
 
         this.socket.on('request-server', function () {
-            this.socket.emit('server-type', this.state.gameServer)
+            this.socket.emit('server-type', serverSelect.getServer())
         }.bind(this));
 
         this.socket.on('join', function (data) {
             this.setState({
                 messages: data.auctions.PreviousAuctions,
                 connected: true,
-                gameServer: this.state.gameServer,
                 switched: false,
             });
         }.bind(this));
@@ -39,7 +39,6 @@ class AuctionFeed extends React.Component {
         this.socket.on('auctions-updated', function (data) {
             this.setState({
                 connected: this.state.connected,
-                gameServer: this.state.gameServer,
                 messages: this.state.messages.concat(data)
             });
         }.bind(this));
@@ -122,16 +121,16 @@ class AuctionFeed extends React.Component {
         return (
             <div>
                 <h1 id="page-title" className="page-header">
-                    Live Auction Feed - {this.state.gameServer} Server
+                    Live Auction Feed - {helpers.titleCase(serverSelect.getServer())} Server
                 </h1>
 
                 <div className="auction-container" id="auction-container">
                     <div className="auction-buttons">
-                        <button onClick={this.switchServer.bind(this)}
-                                className={"btn btn-xs " + (this.state.gameServer == "Blue" ? "btn-danger" : "btn-primary")}>
-                            Switch
-                            to {this.state.gameServer == "Blue" ? "Red" : "Blue"} Server
-                        </button>
+                        {/*<button onClick={this.switchServer.bind(this)}*/}
+                                {/*className={"btn btn-xs " + (this.state.gameServer == "Blue" ? "btn-danger" : "btn-primary")}>*/}
+                            {/*Switch*/}
+                            {/*to {this.state.gameServer == "Blue" ? "Red" : "Blue"} Server*/}
+                        {/*</button>*/}
                         &nbsp;
                         <button className="btn btn-xs"><span id="fullscreen-icon" onMouseUp={this.fullscreenToggle}
                                                              className="glyphicon glyphicon-fullscreen"/></button>

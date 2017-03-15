@@ -339,3 +339,7 @@ footer {
     display: none;
     pointer-events: none!important;
 }
+
+.pointer {
+    cursor: pointer;
+}

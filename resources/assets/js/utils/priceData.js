@@ -80,12 +80,15 @@ module.exports = {
             default: //all
         }
         auctions.forEach(function (auc) {
-            seconds = Math.floor((now - new Date(auc.Updated_at)) / 1000);
-            if (seconds < threshold) {
-                sum += auc.Price;
-                total++;
+            if(auc.Price > 0) {
+                seconds = Math.floor((now - new Date(auc.Auctioned_At)) / 1000);
+                if (seconds < threshold) {
+                    sum += auc.Price;
+                    total++;
+                }
             }
         });
+
         if (total > 0)
             return Math.floor(sum / total);
         else

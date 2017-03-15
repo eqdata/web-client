@@ -51,7 +51,6 @@ function createEffect(effect) {
         return null;
 }
 
-
 /**
  * Item information.
  */

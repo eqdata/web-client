@@ -44,7 +44,7 @@ class ItemGraph extends Component {
                     this.props.auctions.forEach(function (auc) {
                         var priceDate = new Date(auc.Auctioned_At);
                         // only include auctions in last 30 days
-                        if (auc.Price > 0 && Math.ceil((now - priceDate) / 1000 / 60 / 60 / 24) < 30)
+                        if (auc.Price > 0 && Math.ceil((now - priceDate) / 1000 / 60 / 60 / 24) < 100)
                             prices.push(auc.Price);
                     });
 
@@ -202,7 +202,7 @@ class ItemGraph extends Component {
                 </div>
             );
         } else {
-            return (<h3>Not enough data to graph</h3>);
+            return (<h3>Not enough recent data to graph</h3>);
         }
     }
 }
@@ -211,11 +211,26 @@ class ItemGraph extends Component {
  * Text box with simple auction stats
  */
 class AuctionStats extends Component {
+    last = null;
 
-    render() {
+    componentWillMount() {
+        // static data
         var d = "never";
         var seller = "n/a";
         var price = "n/a";
+        if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
+            seller = this.props.auctions[0].Seller;
+            price = this.props.auctions[0].Price.toLocaleString() + "pp";
+            d = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
+        }
+        this.last = <span>
+                Last Seen: <span className="textright">{d}</span><br/>
+                Last Seller: <span className="textright">{seller}</span><br />
+                Last Price: <span className="textright">{price}</span><br />
+             </span>
+    }
+
+    render() {
         var average = {
             week: "n/a",
             month: "n/a",
@@ -223,9 +238,6 @@ class AuctionStats extends Component {
         };
 
         if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
-            seller = this.props.auctions[0].Seller;
-            price = this.props.auctions[0].Price.toLocaleString() + "pp";
-            d = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
             average.week = priceHelpers.timeMean(this.props.auctions, "week").toLocaleString() + "pp";
             average.month = priceHelpers.timeMean(this.props.auctions, "month").toLocaleString() + "pp";
             average.all = priceHelpers.timeMean(this.props.auctions, "all").toLocaleString() + "pp";
@@ -234,15 +246,37 @@ class AuctionStats extends Component {
             <div className="well search">
                 <h4>Auction Statistics</h4>
                 <p>
-                    Last Seen: <span className="textright">{d}</span><br/>
-                    Last Seller: <span className="textright">{seller}</span><br />
-                    Last Price: <span className="textright">{price}</span><br />
+                    {this.last}
                     Average (week): <span className="textright">{average.week}</span><br />
                     Average (month): <span className="textright">{average.month}</span><br />
                     Average (all time): <span className="textright">{average.all}</span><br />
                 </p>
             </div>
         );
+    }
+}
+
+class PagerNext extends Component {
+
+    handleMouseUp() {
+        this.props.setSkip(this.props.currentAucOffset + Item.skipInterval);
+    }
+
+    render() {
+        return <li className="next"><a className="pointer" onMouseUp={this.handleMouseUp.bind(this)}>Next &rarr;</a>
+        </li>;
+    }
+}
+
+class PagerPrevious extends Component {
+
+    handleMouseUp() {
+        this.props.setSkip(this.props.currentAucOffset - Item.skipInterval);
+    }
+
+    render() {
+        return <li className="previous"><a className="pointer" onMouseUp={this.handleMouseUp.bind(this)}>Prev &larr;</a>
+        </li>;
     }
 }
 
@@ -262,6 +296,9 @@ class AuctionHistory extends Component {
     render() {
         var auction = null;
         var d = null;
+        var price = 0;
+        var prevPager = null;
+        var nextPager = null;
         var rows = [<tr key="0">
             <th>Player</th>
             <th>Price</th>
@@ -272,18 +309,24 @@ class AuctionHistory extends Component {
             // format date
             auction = this.props.auctions[i - 1]; // reserve 0 for <tr>
             d = helpers.prettyDate(new Date(auction.Auctioned_At));
+            price = auction.Price > 0 ? auction.Price.toLocaleString() + "pp" : "none";
 
             // TODO add seller page
             rows.push(<tr key={i} onMouseLeave={this.handleMouseLeave.bind(this)}
                           onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
-                <td><Link to={"/seller/SERVER/" + auction.Seller}>{auction.Seller}</Link></td>
-                <td>{auction.Price.toLocaleString()}pp</td>
+                <td><Link to={"/seller/" + serverSelect.getServer() + "/" + auction.Seller}>{auction.Seller}</Link></td>
+                <td>{price}</td>
                 <td>{auction.Quantity}</td>
                 <td><Link
                     to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
                 </td>
             </tr>);
         }
+
+        if (this.props.currentAucOffset > 0)
+            prevPager = <PagerPrevious currentAucOffset={this.props.currentAucOffset} setSkip={this.props.setSkip}/>;
+        if (this.props.auctions.length == Item.skipInterval)
+            nextPager = <PagerNext currentAucOffset={this.props.currentAucOffset} setSkip={this.props.setSkip}/>;
 
         return (
             <div>
@@ -293,6 +336,10 @@ class AuctionHistory extends Component {
                     {rows}
                     </tbody>
                 </table>
+                <ul className="pager">
+                    {prevPager}
+                    {nextPager}
+                </ul>
             </div>
         )
     }
@@ -340,6 +387,8 @@ class HistoryGraphFrame extends Component {
                 <div className="row">
                     <div className="col-md-7">
                         <AuctionHistory auctions={this.props.auctions} item={this.props.item}
+                                        setSkip={this.props.setSkip}
+                                        currentAucOffset={this.props.currentAucOffset}
                                         graphFunc={this.plotHoverPrice.bind(this)}/>
                     </div>
                     <div className="col-md-5">
@@ -357,6 +406,8 @@ class HistoryGraphFrame extends Component {
  */
 class Item extends Component {
 
+    static skipInterval = 8;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -364,7 +415,8 @@ class Item extends Component {
             auctions: [],
             raw: false,
             graphData: {},
-            average: 0
+            average: 0,
+            skip: 0
         };
     }
 
@@ -376,6 +428,10 @@ class Item extends Component {
             elem.style.transition = "opacity 550ms";
             elem.style.opacity = 1;
         });
+    }
+
+    setSkip(skip) {
+        this.getAuctionData(skip);
     }
 
     /**
@@ -428,16 +484,19 @@ class Item extends Component {
         }.bind(this), function (err) {
             console.log("error: " + err);
         });
+        this.getAuctionData();
+    }
 
-        // TODO paginate
+    getAuctionData(skip = 0) {
         // ?skip=0&take=10&ascending=1
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item + "?server=" + serverSelect.getServer(),
+            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item + "?server=" + serverSelect.getServer() +
+            "&skip=" + skip + "&take=" + Item.skipInterval,
             contentType: "application/json",
             cache: false,
             type: "GET",
         }).then(function (payload) {
-            this.setState({auctions: payload.data.Auctions});//this.sanitizeAuctions(payload.data.Auctions)});
+            this.setState({auctions: payload.data.Auctions, skip: skip});//this.sanitizeAuctions(payload.data.Auctions)});
         }.bind(this), function (err) {
             console.log("error: " + err);
         });
@@ -473,6 +532,8 @@ class Item extends Component {
                     </div>
                     <HistoryGraphFrame raw={this.props.params.auctions} auctions={this.state.auctions}
                                        graphData={this.state.graphData}
+                                       setSkip={this.setSkip.bind(this)}
+                                       currentAucOffset={this.state.skip}
                                        item={this.state.item} setGraphData={this.setGraphData.bind(this)}/>
                 </div>
             );
