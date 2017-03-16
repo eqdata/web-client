@@ -19,13 +19,13 @@
                         <a href="/feed">Live Auction Feed</a>
                     </li>
                     <li>
-                        <a href="#">Login</a>
+                        {{--<a href="#">Login</a>--}}
                     </li>
                     <li>
                         <a href="#">Donate</a>
                     </li>
                     <li>
-                        <a href="#">About us</a>
+                        {{--<a href="#">About us</a>--}}
                     </li>
                 </ul>
             </div>

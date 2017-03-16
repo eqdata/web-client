@@ -76,6 +76,11 @@ footer {
     clear: both;
     background-color: #f5f5f5;
 }
+
+.footer ul {
+    min-height: 100px;
+}
+
 .navbar-default {
     background-color: #4773ae;
     border-color: #468cce;

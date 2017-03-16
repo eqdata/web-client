@@ -121,7 +121,8 @@ class AuctionFeed extends React.Component {
         return (
             <div>
                 <h1 id="page-title" className="page-header">
-                    Live Auction Feed - {helpers.titleCase(serverSelect.getServer())} Server
+                    Live Auction Feed &nbsp;
+                    <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server </small>
                 </h1>
 
                 <div className="auction-container" id="auction-container">

@@ -510,7 +510,8 @@ class Item extends Component {
                 <div>
                     <div className="row">
                         <h1 id="page-title" className="page-header">
-                            {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")}
+                            {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")} &nbsp;
+                            <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server </small>
                         </h1>
                         <div>
                             <div className="col-md-7">

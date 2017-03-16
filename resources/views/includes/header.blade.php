@@ -4,7 +4,7 @@
         <ul class="index-menu">
             <li><a class="pointer" id="server-toggle">Switch to <span id="server-name">Red</span> Server</a></li>
             <li><a href="/feed">Live Feed</a></li>
-            <li><a href="#logout" data-prevent="">Login</a></li>
+            {{--<li><a href="#logout" data-prevent="">Login</a></li>--}}
         </ul>
     </div>
 
@@ -24,7 +24,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li><a class="pointer" id="server-toggle">Switch to <span id="server-name">Red</span> Server</a></li>
                     <li><a href="/feed">Live Feed</a></li>
-                    <li><a href="#logout" data-prevent="">Login</a></li>
+                    {{--<li><a href="#logout" data-prevent="">Login</a></li>--}}
                 </ul>
                 @if(isset($showNavSearch))
                     <div class="col-sm-6 col-md-6">

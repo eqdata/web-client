@@ -108,12 +108,11 @@ class SearchResults extends Component {
             this.state.results.Items.forEach(function (result) {
                 rows.push(<ResultItem key={result} item={result}/>)
             });
-        else
-            return (
-                <div>
-                    <h2>No items were found using the phrase "{this.props.params.terms}"</h2>
-                </div>
+        else {
+            rows.push(
+                <h3>No results</h3>
             );
+        }
         return (
             <div>
                 <h1 id="query-string" className="page-header">
