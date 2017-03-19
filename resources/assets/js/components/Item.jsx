@@ -206,7 +206,8 @@ class ItemGraph extends Component {
                 </div>
             );
         } else {
-            return (<h3>Not enough recent data to graph</h3>);
+            return (<div><h3>Insufficient Price Data</h3><div className="well well-warning">This price graph uses data from the last 30 days. If you are seeing this message, there
+            have been no valid prices recorded for this item recently.</div></div>);
         }
     }
 }
