@@ -64,24 +64,13 @@ class TooltipLink extends Component {
                     this.setState({item: payload.data});
                     console.log("Set item to: ", payload.data)
                 }
+                aucStats.week = Math.floor(this.state.item.PriceData.Weekly.Average).toLocaleString() + "pp";//PriceHelpers.timeMean(this.state.auctions, "week").toLocaleString() + "pp";
+                aucStats.month = Math.floor(this.state.item.PriceData.Monthly.Average).toLocaleString() + "pp";//PriceHelpers.timeMean(this.state.auctions, "month").toLocaleString() + "pp";
+                aucStats.allTime = Math.floor(this.state.item.PriceData.All.Average).toLocaleString() + "pp";//PriceHelpers.timeMean(this.state.auctions, "all").toLocaleString() + "pp";
+                this.downloadedInfo = true;
+                var toptip = document.getElementById("toptip");
+                ReactDOM.render(<ItemInfoBox item={this.state.item} aucStats={aucStats}/>, toptip);
 
-                Helpers.ajax({
-                    url: "http://52.205.204.206:8085/items/auctions/" + this.props.name.trim() + "?server=" + (this.props.server || "blue"),
-                    contentType: "application/json",
-                    cache: false,
-                    type: "GET",
-                }).then(function (payload) {
-                    this.downloadedInfo = true
-                    this.setState({auctions: payload.data.Auctions, downloadedInfo: true});//this.sanitizeAuctions(payload.data.Auctions)});
-                    if (this.state.auctions) {
-                        aucStats.week = PriceHelpers.timeMean(this.state.auctions, "week").toLocaleString() + "pp";
-                        aucStats.month = PriceHelpers.timeMean(this.state.auctions, "month").toLocaleString() + "pp";
-                        aucStats.allTime = PriceHelpers.timeMean(this.state.auctions, "all").toLocaleString() + "pp";
-                    }
-
-                    var toptip = document.getElementById("toptip");
-                    ReactDOM.render(<ItemInfoBox item={this.state.item} aucStats={aucStats}/>, toptip);
-                }.bind(this));
             }.bind(this));
         }
     }

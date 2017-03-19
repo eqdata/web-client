@@ -31,9 +31,12 @@ class ItemGraph extends Component {
     componentWillMount() {
         var index = 0;
         var chartData = [];
-        var stdDev = 0;
-        var min = 0;
-        var max = 0;
+        // var stats = {
+        //     stdDev: this.props.PriceData.Monthly.StandardDeviation,
+        //     mean: this.props.PriceData.Monthly.Average,
+        //     min: this.props.PriceData.Monthly.Minimum,
+        //     max: this.props.PriceData.Monthly.Maximum
+        // };
 
         var prices = [];
         var prec = 10;
@@ -60,16 +63,16 @@ class ItemGraph extends Component {
 
         var generateStats = function (prices) {
             return new Promise(function (resolve, reject) {
-                stdDev = priceHelpers.getStandardDeviation(prices, prec);
-                this.mean = Math.floor(priceHelpers.arrayMean(prices));
+                var stdDev = this.props.item.PriceData.Monthly.StandardDeviation;//priceHelpers.getStandardDeviation(prices, prec);
+                this.mean = this.props.item.PriceData.Monthly.Average;//Math.floor(priceHelpers.arrayMean(prices));
                 // var pricesFiltered = prices.filter(function (price) {
                 //     // TODO remove outliers from calculation of mean using a filter function on the array
                 //
                 // });
                 if (stdDev == 0)
-                    stdDev = mean / 4;
-                min = this.mean - 3 * stdDev;
-                max = this.mean + 3 * stdDev;
+                    stdDev = this.mean / 4;
+                var min = this.mean - 3 * stdDev;
+                var max = this.mean + 3 * stdDev;
                 if (stdDev && this.mean && min && max)
                     resolve({
                         stdDev: stdDev,
@@ -229,9 +232,9 @@ class AuctionStats extends Component {
                 this.lastPrice = this.props.auctions[0].Price > 0 ? this.props.auctions[0].Price.toLocaleString() + "pp" : "none";
                 this.lastSeen = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
             }
-            average.week = priceHelpers.timeMean(this.props.auctions, "week").toLocaleString() + "pp";
-            average.month = priceHelpers.timeMean(this.props.auctions, "month").toLocaleString() + "pp";
-            average.all = priceHelpers.timeMean(this.props.auctions, "all").toLocaleString() + "pp";
+            average.week = Math.floor(this.props.item.PriceData.Weekly.Average).toLocaleString() + "pp";
+            average.month = Math.floor(this.props.item.PriceData.Monthly.Average).toLocaleString() + "pp";
+            average.all = Math.floor(this.props.item.PriceData.All.Average).toLocaleString() + "pp";
         }
         return (
             <div className="well search">
@@ -310,7 +313,8 @@ class AuctionHistory extends Component {
                 <td><Link to={"/seller/" + serverSelect.getServer() + "/" + auction.Seller}>{auction.Seller}</Link></td>
                 <td>{price}</td>
                 {/*<td>{auction.Quantity}</td>*/}
-                <td><a className="simptip-position-top simptip-fade simptip-smooth simptip-multiline" data-tooltip={auction.Auction_Line}>{d}</a>
+                <td><a className="simptip-position-top simptip-fade simptip-smooth simptip-multiline"
+                       data-tooltip={auction.Auction_Line}>{d}</a>
                 </td>
             </tr>);
         }
@@ -511,7 +515,7 @@ class Item extends Component {
                     <div className="row">
                         <h1 id="page-title" className="page-header">
                             {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")} &nbsp;
-                            <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server </small>
+                            <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server</small>
                         </h1>
                         <div>
                             <div className="col-md-7">
@@ -519,7 +523,7 @@ class Item extends Component {
                             </div>
                             <div className="hidden-lg hidden-md hidden-sm">&nbsp;</div>
                             <div className="col-md-5">
-                                <AuctionStats auctions={this.state.auctions}/>
+                                <AuctionStats auctions={this.state.auctions} item={this.state.item}/>
                             </div>
                         </div>
                     </div>
