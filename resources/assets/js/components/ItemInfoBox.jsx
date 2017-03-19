@@ -108,6 +108,7 @@ class ItemInfoBox extends Component {
             name: item.Effect.Name ? item.Effect.Name : "",
             restrict: item.Effect.Restriction ? item.Effect.Restriction : "",
         };
+        var haste = getStat(item.Statistics, "haste");
         var weight = getStat(item.Statistics, "wt");
         var size = getStat(item.Statistics, "size");
         var classes = item.Classes ? item.Classes.join(" ") : "";
@@ -118,6 +119,7 @@ class ItemInfoBox extends Component {
             loading: this.props.item.Loading ? true : false,
             affinity: affinities,
             slot: withLabel("Slot", slots),
+            haste: withLabel("Haste", haste),
             skill: withLabel("Skill", skill) + " " + withLabel("Atk Delay", delay),
             ac: withLabel("AC", ac),
             dmg: withLabel("DMG", dmg),
@@ -153,6 +155,7 @@ class ItemInfoBox extends Component {
                             {lines.loading ? <span>Fetching item data...</span> : ""}
                             {lines.affinity ? <span>{lines.affinity} <br /></span> : ""}
                             {lines.slot ? <span>{lines.slot} <br /></span> : ""}
+                            {lines.haste ? <span>{lines.haste}% <br /></span> : ""}
                             {lines.ac ? <span>{lines.ac} <br /></span> : ""}
                             {lines.skill != " " ? <span>{lines.skill} <br /></span> : ""}
                             {lines.dmg ? <span>{lines.dmg} <br /></span> : ""}
