@@ -13,6 +13,8 @@
     <!-- Custom CSS -->
     <link href="/css/default.css" rel="stylesheet">
 
+    <!--Simptip CSS-->
+    <link rel="stylesheet" type="text/css" href="/css/simptip-mini.css" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

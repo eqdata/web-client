@@ -3,6 +3,7 @@ import ReactDOM, {render} from 'react-dom';
 import {Chart} from 'react-google-charts';
 import {Link} from 'react-router';
 import ItemInfoBox from './ItemInfoBox';
+import {Tooltip} from 'react-lightweight-tooltip';
 
 import helpers from '../utils/helpers.js';
 import priceHelpers from '../utils/priceData';
@@ -294,7 +295,7 @@ class AuctionHistory extends Component {
         var rows = [<tr key="0">
             <th>Player</th>
             <th>Price</th>
-            <th>Quantity</th>
+            {/*<th>Quantity</th>*/}
             <th>Time</th>
         </tr>];
         for (var i = 1; i <= this.props.auctions.length; i++) {
@@ -308,9 +309,8 @@ class AuctionHistory extends Component {
                           onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                 <td><Link to={"/seller/" + serverSelect.getServer() + "/" + auction.Seller}>{auction.Seller}</Link></td>
                 <td>{price}</td>
-                <td>{auction.Quantity}</td>
-                <td><Link
-                    to={"/item/" + encodeURI(auction.Item) + "/auctions"}>{d}</Link>
+                {/*<td>{auction.Quantity}</td>*/}
+                <td><a className="simptip-position-top simptip-fade simptip-smooth simptip-multiline" data-tooltip={auction.Auction_Line}>{d}</a>
                 </td>
             </tr>);
         }
