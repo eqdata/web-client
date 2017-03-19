@@ -3,8 +3,24 @@ import {Link} from 'react-router';
 import TooltipLink from './TooltipLink';
 
 class AuctionLine extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            render: false
+        }
+    }
+    componentWillMount() {
+        setTimeout(function() {
+            console.log("Rendering now!")
+            this.setState({ render: true })
+        }.bind(this), this.props.delay || 0)
+    }
     shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.message.line !== this.props.message.line
+        if(nextState.render || this.state.render) {
+            console.log(nextProps.message.line !== this.props.message.line)
+            return true
+        }
+        return false
     }
     injectLinks(o) {
         var elems = []
@@ -64,6 +80,15 @@ class AuctionLine extends React.Component {
         return elems
     }
     render() {
+        if(!this.state.render) return null;
+
+        if(this.props.shouldScrollOnRender) {
+            setTimeout(function() {
+                var objDiv = document.getElementById("auction-box");
+                objDiv.scrollTop = objDiv.scrollHeight;
+            }, 100)
+        }
+
         return <div className="auction-message"><span>{ this.injectLinks(this.props.message) }</span></div>
     }
 }

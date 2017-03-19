@@ -94,6 +94,10 @@ class AuctionFeed extends React.Component {
     }
 
     componentDidUpdate() {
+        this.updateScrollHeight()
+    }
+
+    updateScrollHeight() {
         // keep feed growing upward if the window is scrolled down
         if (this.shouldScroll) {
             var objDiv = document.getElementById("auction-box");
@@ -146,8 +150,8 @@ class AuctionFeed extends React.Component {
 
                         {
                             this.state.messages.map(function(msg, idx) {
-                                return <AuctionLine message={msg} key={"message"+idx} />
-                            })
+                                return <AuctionLine shouldScrollOnRender={this.shouldScroll} delay={idx*10} message={msg} key={"message"+idx} />
+                            }.bind(this))
                         }
 
                     </div>

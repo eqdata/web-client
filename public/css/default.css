@@ -37,6 +37,11 @@ body.index{
     z-index: 2;
 }
 
+
+#auction-box {
+    max-width: 100%;
+}
+
 .index-menu ul {
     list-style: none;
     background-color: #444;
