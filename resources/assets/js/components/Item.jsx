@@ -3,7 +3,6 @@ import ReactDOM, {render} from 'react-dom';
 import {Chart} from 'react-google-charts';
 import {Link} from 'react-router';
 import ItemInfoBox from './ItemInfoBox';
-import {Tooltip} from 'react-lightweight-tooltip';
 
 import helpers from '../utils/helpers.js';
 import priceHelpers from '../utils/priceData';
