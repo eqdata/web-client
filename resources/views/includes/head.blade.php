@@ -4,7 +4,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>P99Tunnel- Auctions</title>
+    <title>P99Tunnel</title>
 
 
     <!-- Bootstrap Core CSS -->

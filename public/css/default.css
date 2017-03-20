@@ -344,6 +344,10 @@ footer {
     border-radius: 0px;
 }
 
+.fullscreen .auction-buttons {
+    margin-top: 50px;
+}
+
 .auction-message {
     color: green;
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
