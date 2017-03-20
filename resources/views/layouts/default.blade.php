@@ -17,8 +17,6 @@
 </div>
 @if(!isset($index) || !$index)
     @include('includes.footer')
-@else
-    <div id="black-overlay"></div>
 @endif
 <!-- /.container -->
 @include('includes.scripts')
