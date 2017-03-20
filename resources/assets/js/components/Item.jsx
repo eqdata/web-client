@@ -298,7 +298,7 @@ class AuctionHistory extends Component {
         var rows = [<tr key="0">
             <th>Player</th>
             <th>Price</th>
-            {/*<th>Quantity</th>*/}
+            <th>Qtgy</th>
             <th>Time</th>
         </tr>];
         for (var i = 1; i <= this.props.auctions.length; i++) {
@@ -312,7 +312,7 @@ class AuctionHistory extends Component {
                           onMouseEnter={this.handleMouseEnter.bind(this, auction.Price)}>
                 <td><Link to={"/seller/" + serverSelect.getServer() + "/" + auction.Seller}>{auction.Seller}</Link></td>
                 <td>{price}</td>
-                {/*<td>{auction.Quantity}</td>*/}
+                <td>{auction.Quantity}</td>
                 <td><a className="simptip-position-top simptip-fade simptip-smooth simptip-multiline"
                        data-tooltip={auction.Auction_Line}>{d}</a>
                 </td>
