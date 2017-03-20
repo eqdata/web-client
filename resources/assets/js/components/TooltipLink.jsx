@@ -100,7 +100,9 @@ class TooltipLink extends Component {
                   onMouseEnter={this.setTooltipContent.bind(this)}
                   onMouseOver={this.showTooltip.bind(this)}
                   onMouseLeave={this.hideTooltip.bind(this)}
-                  onMouseUp={this.hideTooltip.bind(this)}>
+                  onMouseUp={this.hideTooltip.bind(this)}
+                  target="_blank"
+            >
                 { this.props.name }
             </Link>
         )
