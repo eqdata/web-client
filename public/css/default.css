@@ -83,6 +83,7 @@ footer {
     /*height: 180px;*/
     clear: both;
     background-color: #f5f5f5;
+    z-index: 3;
 }
 
 .footer ul {
