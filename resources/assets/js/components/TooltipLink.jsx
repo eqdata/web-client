@@ -6,6 +6,7 @@ import Helpers from '../utils/helpers'
 import ItemInfoBox from './ItemInfoBox';
 import PriceHelpers from '../utils/priceData';
 import {Link} from 'react-router';
+import serverSelect from "../utils/serverSelect";
 
 class TooltipLink extends Component {
     constructor(props) {
@@ -55,7 +56,7 @@ class TooltipLink extends Component {
             }
 
             Helpers.ajax({
-                url: "http://52.205.204.206:8085/items/" + this.props.name.trim(),
+                url: "http://52.205.204.206:8085/items/" + this.props.name.trim() + "?server=" + serverSelect.getServer(),
                 contentType: "application/json",
                 cache: false,
                 type: "GET",
