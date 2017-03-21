@@ -46,7 +46,7 @@ function withLabel(label, stat, sign = false) {
  */
 function createEffect(effect) {
     if (effect.name)
-        return <span>Effect: <a href={effect.uri}>{effect.name}</a> {effect.restrict}</span>;
+        return <span>Effect: <a target="blank" href={effect.uri}>{effect.name}</a> {effect.restrict}</span>;
     else
         return null;
 }
