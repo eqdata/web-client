@@ -189,7 +189,7 @@ class ItemGraph extends Component {
                 this.props.graphData.rows.push([this.mean, null, null, null, priceY, " "]);
             }
             return (
-                <div>
+                <div id="price-graph">
                     <h3>Price Distribution</h3>
                     <Chart
                         chartType="AreaChart"

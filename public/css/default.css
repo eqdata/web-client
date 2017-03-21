@@ -376,3 +376,7 @@ footer {
 .pointer {
     cursor: pointer;
 }
+
+#price-graph {
+    margin-bottom: 10px;
+}
