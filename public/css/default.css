@@ -194,6 +194,16 @@ footer {
     margin: auto;
 }
 
+.server-blue{
+    color: #0033cc;
+    font-size: 65%;
+}
+
+.server-red{
+    color: #cc0000;
+    font-size: 65%;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);

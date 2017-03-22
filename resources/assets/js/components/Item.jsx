@@ -515,7 +515,7 @@ class Item extends Component {
                     <div className="row">
                         <h1 id="page-title" className="page-header">
                             {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")} &nbsp;
-                            <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server</small>
+                            <span className={"server-"+serverSelect.getServer()} id="page-title">{helpers.titleCase(serverSelect.getServer())} Server</span>
                         </h1>
                         <div>
                             <div className="col-md-7">

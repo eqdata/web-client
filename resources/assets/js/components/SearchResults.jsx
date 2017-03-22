@@ -117,7 +117,7 @@ class SearchResults extends Component {
             <div>
                 <h1 id="query-string" className="page-header">
                     Search: {this.props.params.terms} &nbsp;
-                    <small id="page-title">{helpers.titleCase(serverSelect.getServer())} Server </small>
+                    <span className={"server-"+serverSelect.getServer()} id="page-title">{helpers.titleCase(serverSelect.getServer())} Server</span>
                 </h1>
                 {rows}
             </div>
