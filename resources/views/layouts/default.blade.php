@@ -20,6 +20,7 @@
 @endif
 <!-- /.container -->
 @include('includes.scripts')
+@include('includes.modals')
 </body>
 
 </html>

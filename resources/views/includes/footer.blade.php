@@ -22,7 +22,7 @@
                         {{--<a href="#">Login</a>--}}
                     </li>
                     <li>
-                        <a href="#">Donate</a>
+                        <a href="#" data-toggle="modal" data-target="#donate-modal">Donate</a>
                     </li>
                     <li>
                         {{--<a href="#">About us</a>--}}
