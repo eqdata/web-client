@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import TooltipLink from './TooltipLink';
+import helpers from '../utils/helpers.js';
 
 class AuctionLine extends React.Component {
     constructor(props) {
@@ -72,7 +73,7 @@ class AuctionLine extends React.Component {
                     found = false
                     elems.push(<TooltipLink key={itemString+":"+i} name={itemString.trim() + " "}/>)
                 } else {
-                    elems.push(<span key={part+":"+i}>{part + " "}</span>)
+                    elems.push(<span key={part+":"+i}>{helpers.entityDecode(part) + " "}</span>)
                 }
             }
         })

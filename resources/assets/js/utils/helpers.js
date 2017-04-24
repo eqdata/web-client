@@ -1,3 +1,5 @@
+import he from 'he';
+
 var Q = require('q');
 
 module.exports = {
@@ -213,5 +215,8 @@ module.exports = {
                 return word[0].toUpperCase() + word.substr(1).toLowerCase()
             }
         }).join(' ')
+    },
+    entityDecode: function(str) {
+        return he.decode(str).replace("&PCT;", "%");
     }
 };
