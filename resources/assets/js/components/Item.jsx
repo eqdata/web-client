@@ -471,7 +471,7 @@ class Item extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/" + this.props.params.item + "?server=" + serverSelect.getServer(),
+            url: "http://34.201.137.44:8085/items/" + this.props.params.item + "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -486,7 +486,7 @@ class Item extends Component {
     getAuctionData(skip = 0) {
         // ?skip=0&take=10&ascending=1
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + this.props.params.item + "?server=" + serverSelect.getServer() +
+            url: "http://34.201.137.44:8085/items/auctions/" + this.props.params.item + "?server=" + serverSelect.getServer() +
             "&skip=" + skip + "&take=" + Item.skipInterval,
             contentType: "application/json",
             cache: false,

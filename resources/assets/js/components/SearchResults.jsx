@@ -28,7 +28,7 @@ class ResultItem extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/" + this.props.item + "?server=" + serverSelect.getServer(),
+            url: "http://34.201.137.44:8085/items/" + this.props.item + "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -39,7 +39,7 @@ class ResultItem extends Component {
         });
 
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/auctions/" + this.props.item + "?take=1" +
+            url: "http://34.201.137.44:8085/items/auctions/" + this.props.item + "?take=1" +
             "&server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
@@ -90,7 +90,7 @@ class SearchResults extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://52.205.204.206:8085/items/search/" + this.props.params.terms +
+            url: "http://34.201.137.44:8085/items/search/" + this.props.params.terms +
             "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,

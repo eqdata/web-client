@@ -56,7 +56,7 @@ class TooltipLink extends Component {
             }
 
             Helpers.ajax({
-                url: "http://52.205.204.206:8085/items/" + this.props.name.trim() + "?server=" + serverSelect.getServer(),
+                url: "http://34.201.137.44:8085/items/" + this.props.name.trim() + "?server=" + serverSelect.getServer(),
                 contentType: "application/json",
                 cache: false,
                 type: "GET",

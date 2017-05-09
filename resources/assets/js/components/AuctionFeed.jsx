@@ -22,7 +22,7 @@ class AuctionFeed extends React.Component {
     }
 
     socketConnect() {
-        this.socket = client.connect('http://52.205.204.206:3000');
+        this.socket = client.connect('http://34.201.137.44:3000');
 
         this.socket.on('request-server', function () {
             this.socket.emit('server-type', serverSelect.getServer())
