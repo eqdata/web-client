@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body">
                 <p>We will be setting up a donation account soon. Until then, please feel free to make any
-                donations via PayPal to <a href="mailto:alexander.sims1992@gmail.com">alexander.sims1992@gmail.com</a>
+                donations via PayPal to <a href="https://paypal.me/alexandersims92">my personal PayPal.me link.</a>
                 </p>
             </div>
             <div class="modal-footer">
