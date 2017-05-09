@@ -17,6 +17,9 @@ Homestead.yaml
 composer.phar
 composer.lock
 
+# Exclude Build file from commit
+/public/js/app.js
+
 
 ### PhpStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
