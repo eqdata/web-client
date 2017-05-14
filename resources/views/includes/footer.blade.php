@@ -22,7 +22,7 @@
                         {{--<a href="#">Login</a>--}}
                     </li>
                     <li>
-                        <a href="#" data-toggle="modal" data-target="#donate-modal">Donate</a>
+                        <a href="https://www.patreon.com/alexmk92">Donate</a>
                     </li>
                     <li>
                         {{--<a href="#">About us</a>--}}

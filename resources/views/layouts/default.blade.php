@@ -20,7 +20,7 @@
 @endif
 <!-- /.container -->
 @include('includes.scripts')
-@include('includes.modals')
+{{--@include('includes.modals')--}}
 </body>
 
 </html>

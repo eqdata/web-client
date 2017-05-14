@@ -5,6 +5,7 @@ import {Link} from 'react-router';
 import AuctionLine from './AuctionLine';
 import serverSelect from "../utils/serverSelect";
 import helpers from '../utils/helpers.js';
+import {constants} from '../constants';
 
 class AuctionFeed extends React.Component {
     switched = false;
