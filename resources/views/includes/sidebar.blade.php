@@ -8,6 +8,5 @@
     </div>
 <div class="well well-warning">
     P99Tunnel is currently in beta so expect bugs.
-    </div>
     <!-- /.row -->
 </div>

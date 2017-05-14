@@ -7,6 +7,7 @@ import ItemInfoBox from './ItemInfoBox';
 import helpers from '../utils/helpers.js';
 import priceHelpers from '../utils/priceData';
 import serverSelect from "../utils/serverSelect";
+import {constants} from "../constants";
 
 /**
  * Raw auction text as recorded from /auc
@@ -471,7 +472,7 @@ class Item extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: "http://34.201.137.44:8085/items/" + this.props.params.item + "?server=" + serverSelect.getServer(),
+            url: constants.API.HOST + ":" + constants.API.ITEMS_PORT +"/items/" + this.props.params.item + "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -486,7 +487,7 @@ class Item extends Component {
     getAuctionData(skip = 0) {
         // ?skip=0&take=10&ascending=1
         helpers.ajax({
-            url: "http://34.201.137.44:8085/items/auctions/" + this.props.params.item + "?server=" + serverSelect.getServer() +
+            url: constants.API.HOST + ":" + constants.API.ITEMS_PORT + "/items/auctions/" + this.props.params.item + "?server=" + serverSelect.getServer() +
             "&skip=" + skip + "&take=" + Item.skipInterval,
             contentType: "application/json",
             cache: false,

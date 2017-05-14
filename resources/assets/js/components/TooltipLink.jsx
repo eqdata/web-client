@@ -7,6 +7,7 @@ import ItemInfoBox from './ItemInfoBox';
 import PriceHelpers from '../utils/priceData';
 import {Link} from 'react-router';
 import serverSelect from "../utils/serverSelect";
+import { constants } from '../constants';
 
 class TooltipLink extends Component {
     constructor(props) {
@@ -56,7 +57,7 @@ class TooltipLink extends Component {
             }
 
             Helpers.ajax({
-                url: "http://34.201.137.44:8085/items/" + this.props.name.trim() + "?server=" + serverSelect.getServer(),
+                url: constants.API.HOST + ":" + constants.API.ITEMS_PORT + "/items/" + this.props.name.trim() + "?server=" + serverSelect.getServer(),
                 contentType: "application/json",
                 cache: false,
                 type: "GET",
