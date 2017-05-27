@@ -206,8 +206,12 @@ class ItemGraph extends Component {
                 </div>
             );
         } else {
-            return (<div><h3>Insufficient Price Data</h3><div className="well well-warning">This price graph uses data from the last 30 days. If you are seeing this message, there
-            have been no valid prices recorded for this item recently.</div></div>);
+            return (<div><h3>Insufficient Price Data</h3>
+                <div className="well well-warning">This price graph uses data from the last 30 days. If you are seeing
+                    this message, there
+                    have been no valid prices recorded for this item recently.
+                </div>
+            </div>);
         }
     }
 }
@@ -227,16 +231,14 @@ class AuctionStats extends Component {
             all: "n/a"
         };
 
-        if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0) {
-            if (this.lastSeller == "none") {
-                this.lastSeller = this.props.auctions[0].Seller;
-                this.lastPrice = this.props.auctions[0].Price > 0 ? this.props.auctions[0].Price.toLocaleString() + "pp" : "none";
-                this.lastSeen = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
-            }
-            average.week = Math.floor(this.props.item.PriceData.Weekly.Average).toLocaleString() + "pp";
-            average.month = Math.floor(this.props.item.PriceData.Monthly.Average).toLocaleString() + "pp";
-            average.all = Math.floor(this.props.item.PriceData.All.Average).toLocaleString() + "pp";
+        if (Array.isArray(this.props.auctions) && this.props.auctions.length != 0 && this.lastSeller == "none") {
+            this.lastSeller = this.props.auctions[0].Seller;
+            this.lastPrice = this.props.auctions[0].Price > 0 ? this.props.auctions[0].Price.toLocaleString() + "pp" : "none";
+            this.lastSeen = (helpers.prettyDate(new Date(this.props.auctions[0].Auctioned_At)));
         }
+        average.week = Math.floor(this.props.item.PriceData.Weekly.Average).toLocaleString() + "pp";
+        average.month = Math.floor(this.props.item.PriceData.Monthly.Average).toLocaleString() + "pp";
+        average.all = Math.floor(this.props.item.PriceData.All.Average).toLocaleString() + "pp";
         return (
             <div className="well search">
                 <h4>Auction Statistics</h4>
@@ -472,7 +474,7 @@ class Item extends Component {
     componentWillMount() {
         // get state here from API with this.props.params
         helpers.ajax({
-            url: constants.API.HOST + ":" + constants.API.ITEMS_PORT +"/items/" + this.props.params.item + "?server=" + serverSelect.getServer(),
+            url: constants.API.HOST + ":" + constants.API.ITEMS_PORT + "/items/" + this.props.params.item + "?server=" + serverSelect.getServer(),
             contentType: "application/json",
             cache: false,
             type: "GET",
@@ -516,7 +518,8 @@ class Item extends Component {
                     <div className="row">
                         <h1 id="page-title" className="page-header">
                             {decodeURIComponent(this.state.item.Name).replace(/_/g, " ")} &nbsp;
-                            <span className={"server-"+serverSelect.getServer()} id="page-title">{helpers.titleCase(serverSelect.getServer())} Server</span>
+                            <span className={"server-" + serverSelect.getServer()}
+                                  id="page-title">{helpers.titleCase(serverSelect.getServer())} Server</span>
                         </h1>
                         <div>
                             <div className="col-md-7">
