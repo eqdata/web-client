@@ -20,5 +20,8 @@
 
 <div class="well well-warning">
     P99Tunnel is currently in beta so expect bugs.
+    <p>
+        <a href="/changelog">View changelog</a>
+    </p>
     <!-- /.row -->
 </div>

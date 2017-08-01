@@ -84,7 +84,8 @@ class SearchResults extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: []
+            results: [],
+            loading: true
         };
     }
 
@@ -97,19 +98,24 @@ class SearchResults extends Component {
             cache: false,
             type: "GET",
         }).then(function (payload) {
-            this.setState({results: payload.data});
+            this.setState({results: payload.data, loading: false});
         }.bind(this), function (err) {
             console.log("error: " + err);
         });
     }
 
     render() {
+
         var rows = [];
-        if (this.state.results.Items)
+        if(this.state.loading){
+            rows.push(
+                <div className="loader"></div>
+            );
+        }else if (this.state.results.Items) {
             this.state.results.Items.forEach(function (result) {
                 rows.push(<ResultItem key={result} item={result}/>)
             });
-        else {
+        }else {
             rows.push(
                 <h3>No results</h3>
             );

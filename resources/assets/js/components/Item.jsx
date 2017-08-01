@@ -415,7 +415,8 @@ class Item extends Component {
             raw: false,
             graphData: {},
             average: 0,
-            skip: 0
+            skip: 0,
+            loading: true
         };
     }
 
@@ -495,7 +496,7 @@ class Item extends Component {
             cache: false,
             type: "GET",
         }).then(function (payload) {
-            this.setState({auctions: payload.data.Auctions, skip: skip});//this.sanitizeAuctions(payload.data.Auctions)});
+            this.setState({auctions: payload.data.Auctions, skip: skip, loading: false});//this.sanitizeAuctions(payload.data.Auctions)});
         }.bind(this), function (err) {
             console.log("error: " + err);
         });
@@ -506,6 +507,14 @@ class Item extends Component {
     }
 
     render() {
+        if(this.state.loading){
+            return (<div>
+                <h1 id="page-title" className="page-header">
+                    Fetching item data...
+                    </h1>
+                <div className="loader"></div>
+            </div>)
+        }
         if (this.state.item.length == 0)
             return (<div>
                 <h1 id="page-title" className="page-header">
